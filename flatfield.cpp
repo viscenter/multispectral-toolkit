@@ -1,8 +1,8 @@
 
 #include <stdio.h>
 #include <dirent.h>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <cv.h>
+#include <highgui.h>
 
 int tif_filter( struct dirent * d )
 {

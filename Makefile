@@ -4,8 +4,8 @@
 CC = gcc
 CXX = g++
 
-CFLAGS += `pkg-config --cflags opencv`
-LIBS += `pkg-config --libs opencv`
+CFLAGS += $(shell pkg-config --cflags opencv)
+LIBS += $(shell pkg-config --libs opencv)
 
 BUILDBINS = flatten flatfield
 

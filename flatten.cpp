@@ -1,7 +1,7 @@
 
 #include <stdio.h>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <cv.h>
+#include <highgui.h>
 
 IplImage * flatten_image( const char *flat, const char *img )
 {
