@@ -1,7 +1,7 @@
-
+#include <climits>
 #include <stdio.h>
-#include <cv.h>
-#include <highgui.h>
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 
 IplImage * flatten_image( const char *flat, const char *img )
 {
@@ -15,7 +15,7 @@ IplImage * flatten_image( const char *flat, const char *img )
   if( flat_img && image )
   {
     cvSmooth( flat_img, flat_img );
-    cvDiv( image, flat_img, image, 256 );
+    cvDiv( image, flat_img, image, image->depth == 8 ? UCHAR_MAX : USHRT_MAX );
 
     cvReleaseImage( &flat_img );
     return image;
