@@ -12,14 +12,14 @@ RGB_JPG_COMMANDS=""
 
 declare -A rgb
 for i in ${1}/*; do
-  if [[ -d $i ]]; then
-    echo $i 1>&2
+  if [[ -d "$i" ]]; then
+    echo "$i" 1>&2
     export RED=""
     export GREEN=""
     export BLUE=""
-    if [[ -d $i/Processed ]]; then
-      mkdir -p flatfielded/$(basename $i)
-      for j in $i/Processed/*.tif; do
+    if [[ -d "$i"/Processed ]]; then
+      mkdir -p flatfielded/$(basename "$i")
+      for j in "$i"/Processed/*.tif; do
         OUTFILE="flatfielded/$(basename $i)/$(basename $j)"
         
         WAVELENGTH=$(exiv2 -pa $j | grep Exif.Photo.SpectralSensitivity|awk '{print substr($0, index($0,$4))}')
@@ -48,7 +48,7 @@ for i in ${1}/*; do
 
       if [[ -n $RED && -n $GREEN && -n $BLUE ]]; then
         echo "Performing RGB for $(basename $i), was R:$RED G:$GREEN B:$BLUE" 1>&2
-        rgb[$(basename $i)]="$RED $GREEN $BLUE"
+        rgb[$(basename "$i")]="$RED $GREEN $BLUE"
       else
         echo "Skipping RGB for $(basename $i), was R:$RED G:$GREEN B:$BLUE" 1>&2
       fi
@@ -65,7 +65,7 @@ echo "RGB: ${(k)rgb}" 1>&2
 
 mkdir -p rgb
 for i in ${(k)rgb}; do
-  if [[ ! -e rgb/$i.tif ]]; then
+  if [[ ! -e rgb/"$i".tif ]]; then
     RGB_COMMANDS+="convert $rgb[$i] -channel RGB -combine rgb/$i.tif && convert rgb/$i.tif rgb_jpg/$i.jpg\n"
   else
     echo "Skipping RGB for $i, file already exists" 1>&2
@@ -74,7 +74,7 @@ done
 
 mkdir -p rgb_jpg
 for i in ${(k)rgb}; do
-  if [[ ! -e rgb_jpg/$i.jpg ]]; then
+  if [[ ! -e rgb_jpg/"$i".jpg ]]; then
     RGB_JPG_COMMANDS+="convert rgb/$i.tif rgb_jpg/$i.jpg\n"
   else
     echo "Skipping RGB JPG for $i, file already exists" 1>&2
