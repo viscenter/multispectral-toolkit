@@ -12,11 +12,11 @@ A set of tools for organizing and processing multispectral data.
 **Installation**
 
 * Open Terminal
-* $ mkdir ~/source
-  $ cd ~/source
-  $ git clone https://github.com/csparker247/multispectral-toolkit.git
-  $ cd ~/source/multispectral-toolkit/flatfield
-  $ make flatten
+* $ mkdir ~/source  
+$ cd ~/source  
+$ git clone https://github.com/csparker247/multispectral-toolkit.git  
+$ cd ~/source/multispectral-toolkit/flatfield  
+$ make flatten
 * Invoke all scripts from inside the folders you want to process. Check the header of each script for more information. 
 
 
