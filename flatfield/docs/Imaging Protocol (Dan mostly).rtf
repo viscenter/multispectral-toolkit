@@ -1,0 +1,86 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf290
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww13860\viewh13440\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 \
+Photography\
+\
+Start of day:\
+1. Start up software\
+	- Open serial2tcp\
+	- (On other PC) Open reconstructionController\
+	- Open projectorController\
+		- Type IP address of reconstructionController\
+		- Click Run\
+	- Open PhotoShoot\
+2. Flat field\
+	- Check exposures\
+	- Histograms around gold peak (no yellow)\
+3. Color target\
+4. Test projector calibration\
+	- Set white target in image\
+	- Select N-Shot setup, Set 3, preset to project\
+	- Run N-Shot\
+	- If pixel error greater than a few pixels, redo calibration\
+\
+Imaging protocol:\
+1. Set page\
+	- Position page\
+	- Set correct folio number\
+	- Check laser\
+2. Start vacuum\
+3. Turn off lamp\
+4. Laptop screen dimmed\
+5. N-shot table\
+	- Set tile name to folio number\
+	- Ctrl-1 to setup\
+	- Click n-shot button\
+	- Wait for 13 shots\
+6. Turn on projector (button for 2 seconds)\
+7. 3D shots\
+	- Set tile name to folio+3D\
+	- Ctrl-2 to setup\
+	- Click n-shot button\
+	- Wait for 11 shots\
+	- Click n-shot button\
+	- Wait for 11 shots\
+8. Turn off projector (2 seconds)\
+9. Turn on lamp\
+10. Turn off vacuum\
+11. Repeat 1-7\
+\
+Upstairs protocol (technician):\
+1. Select 003, 005, 008 shots, open in PhotoShop\
+2. Select All in Camera Raw Plugin, Open Images\
+3. Fn-F4 to run RGB-stitching\
+4. Type filename to save\
+5. Save RGB file to Processed directory\
+6. Open directory in PhotoShoot\
+7. Verify registration across 13 images\
+8. Click through gray code and depth map pop-ups\
+\
+Upstairs protocol (scholar):\
+1. Open first UV image (001), check sharpness\
+2. Open last NIR image (013), check sharpness\
+3. Open RGB image, check sharpness and color\
+\
+Reconstruction protocol:\
+1. If re-using calibration, copy previous day's calibration directory\
+2. Run reconstructionController\
+3. Output directory to Processed NAS share\
+4. Base directory to Raw NAS share, MVDaily folder\
+5. Click Listen\
+\
+Calibration protocol:\
+(serial2tcp, projectorController, PhotoShoot running)\
+1. N-Shot table Set 3, presets to Project\
+2. Capture 10-20 image pairs\
+3. Run calibration on reconstructionController (other PC)\
+	- Click Calibration Controls\
+	- Click checkbox for simultaneous calibration\
+	- Select Processed directory for Projector Calibration\
+	- Click Run, then wait\
+	- Verify that baseline is reasonable\
+}
