@@ -5,6 +5,17 @@
 # $ cd ~/MVDaily_20121203/TODAYS_FLATS
 # $ ~/source/multispectral-toolkit/applyflats.sh ~/MVDaily_20121203
 
+echo
+echo -------------------------------------------------------
+echo Applyflats - The Multispectral Flatfielding Application
+echo -------------------------------------------------------
+echo "               Hit CTRL + C to exit."
+echo
+
+# Quit if no files/arguments given
+if [ $# -eq 0 ]; then
+	exit 0
+fi
 
 # Setup for applying flatfields to appropriate exposures for each page
 # Checks wavelength of each flatfields image and send to array in format: wavelengths[638nm]="638nm"
@@ -114,19 +125,6 @@ for i in ${(k)rgb}; do
     echo "Skipping RGB JPG for $i, file already exists" 1>&2
   fi
 done
-
-# Beginning work to find original metadata and apply it to new outputs
-# mkdir -p exif
-# for i in flatfielded/*; do
-#   for j in i/*.tif; do
-#     EXV="exif/$(basename $j .tif).exv"
-#     if [[ ! -e $EXV ]]; then
-#       echo "exiv2 -l exif -ee ${1}/$(basename $i)/Mega/$(basename $j .tif).dng"
-#     fi
-#     echo "exiv2 -l exif -M'del Exif.Image.DNGVersion' -M'del Exif.Image.DNGBackwardVersion' -M'del Exif.Image.BlackLevel' -M'del Exif.Image.WhiteLevel' -M'set Exif.Image.ProcessingSoftware Ascii Flatfielded by $(basename $1)/$(basename $pwd)' in $j"
-#   done
-# done
-
 
 # Run all accumulated commands at once
 echo "Flatfielding..." 1>&2

@@ -4,6 +4,13 @@
 # Assumes shots are numbered according to the VisCenter N-Shot Table Standard. See readme for more details and pre-processing information.
 # Run from a collection's flatfielded folder.
 
+echo
+echo -----------------------------------------------
+echo Spectralize - Render Multispectral Measurements
+echo -----------------------------------------------
+echo "           Hit CTRL + C to exit."
+echo
+
 for i in */; do
 	cd $i
 	folio="$(basename $i)"

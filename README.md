@@ -6,6 +6,7 @@ A set of tools for organizing and processing multispectral data.
 
 **Latest Updates**
 
+* 12.4.2012 - Added Copyrighter to toolkit. Added some ID UI to all scripts.
 * 12.3.2012 - Initial commit. First versions of despot and spectralize. Subtree merge with csparker247/flatfield. All flatfield development moving to this project.
 
 
