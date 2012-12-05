@@ -3,6 +3,8 @@
 # despot - Flatfield Spot Removal
 # Fills in dark spots on flatfields. Created to account for disruptive texturing in flatfielding surface (i.e. paper pulp)
 # Run from the flatfields' Processed folder
+# This script is not really ready for primetime. It causes some strange issues in the outputs of applyflats and spectralize.
+
 
 echo
 echo -------------------------------

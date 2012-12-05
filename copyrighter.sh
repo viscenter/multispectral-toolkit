@@ -30,56 +30,35 @@ echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_ye
 done
 
 echo
-
-
-if [[ ! -d flatfielded ]]; then
-	echo "$(date +"%F") :: $(date +"%T") :: No flatfielded folder..."
-else
-for i in flatfielded/*; do
-	for j in $i/*.tif; do
-		CURRENTCOPY=$(exiv2 -pa $j | grep Exif.Image.Copyright|awk '{print substr($0, index($0,$4))}')
-  		if [[ $CURRENTCOPY != "Copyright, $copyright_name, $copyright_year. All rights reserved." ]]; then
-			echo "$(date +"%F") :: $(date +"%T") :: Writing copyright metadata to $j..."
-			exiv2 -M"del Exif.Image.Copyright" -M"set Exif.Image.Copyright Ascii Copyright, $copyright_name, $copyright_year. All rights reserved." $j
-		fi
+echo -----------------------------------------------------
+echo
+echo "Current working folder is `PWD`"
+echo
+echo "Is this folder a single volume or a collection of volumes?"
+echo "NOTE: A volume represents a single book, with subfolders for each of its pages."
+echo
+PS3="Enter option number:"
+	select SET in "Single Volume" "Collection of Volumes"; do
+	  case $SET in
+			"Single Volume" ) echo "Working on single volume."
+				type="1"
+			  	break;;
+			"Collection of Volumes" ) echo "Working on collection of volumes."
+			  	type="2"
+			  	break;;
+	  esac
 	done
-done
+echo
+echo -----------------------------------------------------
+echo
+
+export copyright_name
+export copyright_year
+
+if [ $type = "1" ]; then
+	${HOME}/source/multispectral-toolkit/copyrighter/single.sh
 fi
 
-if [[ ! -d multispectral ]]; then
-	echo "$(date +"%F") :: $(date +"%T") :: No multispectral folder..."
-else
-for i in multispectral/*; do
-	for j in $i/*.png; do
-		CURRENTCOPY=$(exiv2 -pa $j | grep Exif.Image.Copyright|awk '{print substr($0, index($0,$4))}')
-  		if [[ $CURRENTCOPY != "Copyright, $copyright_name, $copyright_year. All rights reserved." ]]; then
-			echo "$(date +"%F") :: $(date +"%T") :: Writing copyright metadata to $j..."
-			exiv2 -M"del Exif.Image.Copyright" -M"set Exif.Image.Copyright Ascii Copyright, $copyright_name, $copyright_year. All rights reserved." $j
-		fi
-	done
-done
-fi
-
-if [[ ! -d rgb ]]; then
-	echo "$(date +"%F") :: $(date +"%T") :: No rgb folder..."
-else
-for i in rgb/*.tif; do
-		CURRENTCOPY=$(exiv2 -pa $j | grep Exif.Image.Copyright|awk '{print substr($0, index($0,$4))}')
-  		if [[ $CURRENTCOPY != "Copyright, $copyright_name, $copyright_year. All rights reserved." ]]; then
-			echo "$(date +"%F") :: $(date +"%T") :: Writing copyright metadata to $i..."
-			exiv2 -M'del Exif.Image.Copyright' -M"set Exif.Image.Copyright Ascii Copyright, $copyright_name, $copyright_year. All rights reserved." $i
-		fi
-done
-fi
-
-if [[ ! -d rgb_jpg ]]; then
-	echo "$(date +"%F") :: $(date +"%T") :: No rgb_jpg folder..."
-else
-for i in rgb_jpg/*.jpg; do
-		CURRENTCOPY=$(exiv2 -pa $j | grep Exif.Image.Copyright|awk '{print substr($0, index($0,$4))}')
-		if [[ $CURRENTCOPY != "Copyright, $copyright_name, $copyright_year. All rights reserved." ]]; then
-			echo "$(date +"%F") :: $(date +"%T") :: Writing copyright metadata to $i..."
-			exiv2 -M'del Exif.Image.Copyright' -M"add Exif.Image.Copyright Ascii Copyright, $copyright_name, $copyright_year. All rights reserved." $i
-		fi
-done
+if [ $type = "2" ]; then
+	${HOME}/source/multispectral-toolkit/copyrighter/collection.sh
 fi
