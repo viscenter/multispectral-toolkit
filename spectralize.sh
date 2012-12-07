@@ -2,7 +2,7 @@
 
 # Script for creating various multispectral measurements from flatfielded images. Requires imagemagick, teem/unu, and parallel.
 # Assumes shots are numbered according to the VisCenter N-Shot Table Standard. See readme for more details and pre-processing information.
-# Run from a collection's flatfielded folder.
+# Run from the flatfielded folder created by Applyflats.
 
 echo
 echo -----------------------------------------------

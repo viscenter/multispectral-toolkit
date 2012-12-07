@@ -6,6 +6,8 @@ A set of tools for organizing and processing multispectral data.
 
 **Latest Updates**
 
+* 12.7.2012 - Added To-Do list. File reorganization in anticipation of future changes.
+* 12.5.2012 - Update to Copyrighter to work with either single volumes or collections of volumes.
 * 12.4.2012 - Added Copyrighter to toolkit. Added some ID UI to all scripts.
 * 12.3.2012 - Initial commit. First versions of despot and spectralize. Subtree merge with csparker247/flatfield. All flatfield development moving to this project.
 
@@ -25,6 +27,7 @@ $ make flatten
 
 * Making flatten requires OpenCV to be installed.
 * Make sure to build ImageMagick with TIFF support.
+* Despot can cause irregularities when rendering RGB and Multispectral images. As such, the original flats are always kept. Use with caution.
 
 **Other Software**
 

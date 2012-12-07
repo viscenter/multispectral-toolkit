@@ -56,9 +56,9 @@ export copyright_name
 export copyright_year
 
 if [ $type = "1" ]; then
-	${HOME}/source/multispectral-toolkit/copyrighter/single.sh
+	${HOME}/source/multispectral-toolkit/bin/single.sh
 fi
 
 if [ $type = "2" ]; then
-	${HOME}/source/multispectral-toolkit/copyrighter/collection.sh
+	${HOME}/source/multispectral-toolkit/bin/collection.sh
 fi
