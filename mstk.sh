@@ -48,6 +48,10 @@ while true; do
 	fi
 done
 
+## Create setup log file
+setuplog=$(date +"%F")_$(date +"%T")_setup.log
+echo "Setup Information" > $output_folder/$setuplog
+echo >> $output_folder/$setuplog
 
 ## Set Copyright Information
 while true; do
@@ -69,16 +73,20 @@ echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_ye
 		esac
 done
 
+## Find flats
 echo
 echo "Validating folder structure..."
 echo
 
-flats="FLATS_"
+echo "**Flats Locations**" >> $output_folder/$setuplog
 for i in */; do
 	if [ ! -d "$i"/FLATS_* ]; then
 		echo "No flatfields folder found for $(basename $i). It will not be processed."
 		echo
+	else
+		flat=$(find `PWD`/$(basename $i) -type d -name "FLATS_*")
+		echo "`PWD`/$(basename $i)|$flat" >> $output_folder/$setuplog
 	fi
 done
-
+echo >> $output_folder/$setuplog
 
