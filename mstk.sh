@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 
 # mstk - Fully automated processing of daily folders.
 # This script will reorganize
@@ -33,15 +33,16 @@ echo
 # Initial Variable Setup
 
 ## Set Output Folder
-output_folder=
+
 while true; do
-	vared -p "Enter output location (NOTE: Folders can be dropped onto the Terminal window): " output_folder
-	if  [[ -d "$output_folder" ]]; then
+	read -p "Enter output location (NOTE: Folders can be dropped onto the Terminal window): " output_folder
+	echo $output_folder
+	if  [[ -d $output_folder ]]; then
 		echo
 		echo "You have selected $output_folder"
 		break
 	else
-		if [[ ! -d "$output_folder" ]]; then
+		if [[ ! -d $output_folder ]]; then
 		echo "This is not a valid selection. Please select again."
 		echo
 		continue
@@ -57,12 +58,12 @@ echo >> $output_folder/$setuplog
 ## Set Copyright Information
 while true; do
 echo
-vared -p "Please enter the copyright holder's name: " copyright_name
-vared -p "Please enter the copyright year: " copyright_year
+read -p "Please enter the copyright holder's name: " copyright_name
+read -p "Please enter the copyright year: " copyright_year
 echo
 echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_year. All rights reserved."
 	while true; do
-	vared -p "Is this correct? (y/n) " yn
+	read -p "Is this correct? (y/n) " yn
 		case $yn in
 			[YyNn] ) break;;
 			* ) echo "Please answer y or n.";;

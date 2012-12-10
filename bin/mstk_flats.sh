@@ -5,6 +5,10 @@
 
 sub_flats=($global_flats)
 
+echo ${sub_flats[@]}
+
+exit
+
 # Setup for applying flatfields to appropriate exposures for each page
 # Checks wavelength of each flatfields image and send to array in format: wavelengths[638nm]="FILEPATH"
 declare -A wavelengths
