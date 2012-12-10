@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/zsh
 
 # mstk - Fully automated processing of daily folders.
 # This script will reorganize
@@ -33,9 +33,10 @@ echo
 # Initial Variable Setup
 
 ## Set Output Folder
+output_folder=
 while true; do
-	read -p "Enter output location (NOTE: Folders can be dropped onto the Terminal window): " output_folder
-	if [[ -d "$output_folder" ]]; then
+	vared -p "Enter output location (NOTE: Folders can be dropped onto the Terminal window): " output_folder
+	if  [[ -d "$output_folder" ]]; then
 		echo
 		echo "You have selected $output_folder"
 		break
@@ -50,18 +51,18 @@ done
 
 ## Create setup log file
 setuplog=$(date +"%F")_$(date +"%T")_setup.log
-echo "Setup Information" > $output_folder/$setuplog
+echo "mstk Setup Information" > $output_folder/$setuplog
 echo >> $output_folder/$setuplog
 
 ## Set Copyright Information
 while true; do
 echo
-read -p "Please enter the copyright holder's name: " copyright_name
-read -p "Please enter the copyright year: " copyright_year
+vared -p "Please enter the copyright holder's name: " copyright_name
+vared -p "Please enter the copyright year: " copyright_year
 echo
 echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_year. All rights reserved."
 	while true; do
-	read -p "Is this correct? (y/n) " yn
+	vared -p "Is this correct? (y/n) " yn
 		case $yn in
 			[YyNn] ) break;;
 			* ) echo "Please answer y or n.";;
@@ -72,6 +73,10 @@ echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_ye
 			[Nn]* ) continue;;
 		esac
 done
+echo "**Copyright Information**" >> $output_folder/$setuplog
+echo "Copyright, $copyright_name, $copyright_year. All rights reserved." >> $output_folder/$setuplog
+echo >> $output_folder/$setuplog
+
 
 ## Find flats
 echo
@@ -79,14 +84,23 @@ echo "Validating folder structure..."
 echo
 
 echo "**Flats Locations**" >> $output_folder/$setuplog
+declare -a flatfields
 for i in */; do
 	if [ ! -d "$i"/FLATS_* ]; then
 		echo "No flatfields folder found for $(basename $i). It will not be processed."
 		echo
 	else
-		flat=$(find `PWD`/$(basename $i) -type d -name "FLATS_*")
-		echo "`PWD`/$(basename $i)|$flat" >> $output_folder/$setuplog
+		currentflat=$(find `PWD`/$(basename $i) -type d -name "FLATS_*")
+		flatfields=(${flatfields[@]} "$currentflat")
+		echo "$currentflat" >> $output_folder/$setuplog
 	fi
 done
 echo >> $output_folder/$setuplog
 
+## Export variables to env. Does some trickery to carry an array into the ENV.
+export copyright_name
+export copyright_year
+export global_flats="$(for i in ${flatfields[@]}; do echo \"$i\"; done)"
+
+
+${HOME}/source/multispectral-toolkit/bin/mstk_flats.sh
