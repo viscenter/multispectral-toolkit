@@ -8,7 +8,6 @@ echo
 echo -----------------------------------------------
 echo Spectralize - Render Multispectral Measurements
 echo -----------------------------------------------
-echo "           Hit CTRL + C to exit."
 echo
 
 for i in */; do

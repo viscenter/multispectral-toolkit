@@ -52,7 +52,7 @@ done
 
 ## Create setup log file
 setuplog=$(date +"%F")_$(date +"%T")_setup.log
-echo "mstk Setup Information" > $output_folder/$setuplog
+echo "output_folder   $output_folder" >> $output_folder/$setuplog
 echo >> $output_folder/$setuplog
 
 ## Set Copyright Information
@@ -74,34 +74,12 @@ echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_ye
 			[Nn]* ) continue;;
 		esac
 done
-echo "**Copyright Information**" >> $output_folder/$setuplog
-echo "Copyright, $copyright_name, $copyright_year. All rights reserved." >> $output_folder/$setuplog
+echo "copyright_name   $copyright_name" >> $output_folder/$setuplog
+echo "copyright_year   $copyright_year" >> $output_folder/$setuplog
 echo >> $output_folder/$setuplog
 
 
-## Find flats
-echo
-echo "Validating folder structure..."
-echo
-
-echo "**Flats Locations**" >> $output_folder/$setuplog
-declare -a flatfields
-for i in */; do
-	if [ ! -d "$i"/FLATS_* ]; then
-		echo "No flatfields folder found for $(basename $i). It will not be processed."
-		echo
-	else
-		currentflat=$(find `PWD`/$(basename $i) -type d -name "FLATS_*")
-		flatfields=(${flatfields[@]} "$currentflat")
-		echo "$currentflat" >> $output_folder/$setuplog
-	fi
-done
-echo >> $output_folder/$setuplog
-
-## Export variables to env. Does some trickery to carry an array into the ENV.
-export copyright_name
-export copyright_year
-export global_flats="$(for i in ${flatfields[@]}; do echo \"$i\"; done)"
+${HOME}/source/multispectral-toolkit/bin/mstk_flats.sh "$output_folder/$setuplog"
 
 
-${HOME}/source/multispectral-toolkit/bin/mstk_flats.sh
+echo Flatfielding Complete
