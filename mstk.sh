@@ -81,5 +81,27 @@ echo >> $output_folder/$setuplog
 
 ${HOME}/source/multispectral-toolkit/bin/mstk_flats.sh "$output_folder/$setuplog"
 
-
 echo Flatfielding Complete
+
+cd $output_folder
+
+${HOME}/source/multispectral-toolkit/bin/mstk_spectral.sh
+
+cd $output_folder
+
+echo
+echo -----------------------------------------------------
+echo Copyrighter - The Multispectral Copyright Application
+echo -----------------------------------------------------
+echo
+
+export $copyright_name
+export $copyright_year
+
+${HOME}/source/multispectral-toolkit/bin/cpwrtr_collection.sh
+
+echo
+echo -----------------
+echo ALL WORK COMPLETE
+echo -----------------
+echo "$(date +"%F") :: $(date +"%T")"

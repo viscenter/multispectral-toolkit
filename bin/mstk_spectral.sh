@@ -1,8 +1,7 @@
 #!/bin/sh
 
-# Script for creating various multispectral measurements from flatfielded images. Requires imagemagick, teem/unu, and parallel.
-# Assumes shots are numbered according to the VisCenter N-Shot Table Standard. See readme for more details and pre-processing information.
-# Run from the flatfielded folder created by Applyflats.
+# mstk_spectral - The mstk version of spectralize. Create various multispectral measurements from flatfielded images.
+# STOP: Don't run this script on its own. Should be called from mstk.sh. 
 
 echo
 echo -----------------------------------------------
@@ -10,62 +9,66 @@ echo Spectralize - Render Multispectral Measurements
 echo -----------------------------------------------
 echo
 
+ROOT="$PWD"
+
 for i in */; do
 	cd $i
-	folio="$(basename $i)"
+	VOLUME="$PWD"
 	
-if [[ ! -d png ]]; then
-	mkdir png
-fi
-
-	for j in *.tif; do
-		output="$(basename "$j" | sed 's/\(.*\)\..*/\1/').png"
-		if [[ ! -e png/$output ]]; then
-			echo "$(date +"%F") :: $(date +"%T")" :: Converting "$(basename $j)"...
-			convert $j -depth 16 png/$output
-		fi
-	done
-		
-if [[ ! -d png ]]; then
-	echo "$(date +"%F") :: $(date +"%T")" :: "$folio": No PNGs found
-else
-	if [[ ! -d ../../multispectral/$folio ]]; then
-		echo "Beginning work on $folio"
+	cd $VOLUME/flatfielded
+		for j in */; do
+			cd $j
+			PAGE=$PWD
+			folio="$(basename $j)"
+				if [[ ! -d $VOLUME/png ]]; then
+					mkdir -p $VOLUME/png/$folio
+				fi
+			for k in *.tif; do
+				output="$(basename "$k" | sed 's/\(.*\)\..*/\1/').png"
+				if [[ ! -e $VOLUME/png/$folio/$output ]]; then
+					printf "\r$(date +"%F") :: $(date +"%T") :: Converting "$(basename $k)"..."
+					convert -quiet $k -depth 16 $VOLUME/png/$folio/$output
+				fi
+			done
 				
-		echo "$(date +"%F") :: $(date +"%T")" :: Creating volume...
-			unu join -a 2 -i png/*_002.png png/*_014.png png/*_003.png png/*_004.png png/*_005.png png/*_006.png png/*_007.png png/*_008.png png/*_009.png png/*_010.png png/*_011.png png/*_012.png png/*_013.png -o $folio.nrrd
-		
-		echo "$(date +"%F") :: $(date +"%T")" :: Applying measures...
-			for l in min max mean median variance skew intc slope error sd product sum L1 L2 Linf; do echo $l; done | parallel --eta -u unu project -a 2 -i $folio.nrrd -o $folio-f-m-{}.nrrd -m {}
-		
-		echo "$(date +"%F") :: $(date +"%T")" :: Remapping and quantizing results...
-			wget http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt
-			for m in *-f-m-*.nrrd; do echo $m; done | parallel --eta -u "unu rmap -m darkhue.txt -i {} | unu quantize -b 8 -o {.}-noheq.png; unu heq -b 3000 -a 0.5 -i {} | unu rmap -m darkhue.txt | unu quantize -b 8 -o {.}-heq.png"
-		
-		echo "$(date +"%F") :: $(date +"%T")" :: Cleaning up...
-			
-			if [[ ! -d ../../multispectral ]]; then
-				mkdir ../../multispectral
+		if [[ ! -d $VOLUME/png/$folio ]]; then
+			echo
+			echo "$(date +"%F") :: $(date +"%T")" :: "$folio": No PNGs found
+		else
+			if [[ ! -d $VOLUME/multispectral/$folio ]]; then
+				echo
+				echo "Beginning work on $folio"
+				
+					if [[ ! -d $VOLUME/multispectral/$folio ]]; then
+						mkdir -p $VOLUME/multispectral/$folio
+					fi
+					
+					if [[ ! -d $VOLUME/nrrd/$folio ]]; then
+						mkdir -p $VOLUME/nrrd/$folio
+					fi
+				
+				cd $VOLUME/png/$folio/
+						
+				echo "$(date +"%F") :: $(date +"%T")" :: Creating volume...
+					unu join -a 2 -i *_002.png *_014.png *_003.png *_004.png *_005.png *_006.png *_007.png *_008.png *_009.png *_010.png *_011.png *_012.png *_013.png -o $VOLUME/nrrd/$folio/$folio.nrrd
+				
+				echo "$(date +"%F") :: $(date +"%T")" :: Applying measures...
+					for l in min max mean median variance skew intc slope error sd product sum L1 L2 Linf; do echo $l; done | parallel --eta -u unu project -a 2 -i $VOLUME/nrrd/$folio/$folio.nrrd -o $VOLUME/nrrd/$folio/$folio-f-m-{}.nrrd -m {}
+				
+				echo "$(date +"%F") :: $(date +"%T")" :: Remapping and quantizing results...
+					if [ ! -f $VOLUME/nrrd/darkhue.txt ]; then
+						wget -P $VOLUME/nrrd/ http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt
+					fi
+					for m in $VOLUME/nrrd/$folio/*-f-m-*.nrrd; do echo $m; done | parallel --eta -u "unu rmap -m $VOLUME/nrrd/darkhue.txt -i {} | unu quantize -b 8 -o $VOLUME/multispectral/$folio/{/.}-noheq.png; unu heq -b 3000 -a 0.5 -i {} | unu rmap -m $VOLUME/nrrd/darkhue.txt | unu quantize -b 8 -o $VOLUME/multispectral/$folio/{/.}-heq.png"
+				
+				echo	
+				echo "$(date +"%F") :: $(date +"%T")" :: "$folio" done.
+				echo
 			fi
-			if [[ ! -d ../../multispectral/$folio ]]; then
-				mkdir ../../multispectral/$folio
-			fi
-			if [[ ! -d nrrd ]]; then
-				mkdir nrrd
-			fi
-			
-			for n in *.png; do
-				mv $(basename $n) ../../multispectral/$folio/$(basename $n)
-			done
-			
-			for n in *.nrrd; do
-				mv $(basename $n) nrrd/$(basename $n)
-			done
-			
-		echo "$(date +"%F") :: $(date +"%T")" :: "$folio" done.
-	fi
-fi
-
-cd ..
-
+		fi
+		
+		cd $VOLUME/flatfielded
+		
+		done
+	cd $ROOT
 done

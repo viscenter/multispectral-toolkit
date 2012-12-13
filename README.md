@@ -6,6 +6,7 @@ A set of tools for organizing and processing multispectral data.
 
 **Latest Updates**
 
+* 12.13.2012 - First version of mstk and its subscripts. mstk takes a folder of dailies and outputs a fully processed collection.
 * 12.7.2012 - Added To-Do list. File reorganization in anticipation of future changes.
 * 12.5.2012 - Update to Copyrighter to work with either single volumes or collections of volumes.
 * 12.4.2012 - Added Copyrighter to toolkit. Added some ID UI to all scripts.

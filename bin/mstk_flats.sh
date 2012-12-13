@@ -18,6 +18,8 @@ output_folder=$(cat "$1" | grep output_folder | awk '{ print $2 }')
 FLATFIELD_COMMANDS=""
 RGB_COMMANDS=""
 RGB_JPG_COMMANDS=""
+EXV_COMMANDS=""
+CLEANUP_COMMANDS=""
 
 ## Begin work
 echo "$(date +"%F") :: $(date +"%T") :: Checking folder structure and building commands..." 1>&2
@@ -32,6 +34,10 @@ for i in */; do
 		for j in $currentflat/Processed/*.tif; do
 		  WAVELENGTH=$(exiv2 -qpa $j | grep Exif.Photo.SpectralSensitivity|awk '{print substr($0, index($0,$4))}')
 		  wavelengths[$WAVELENGTH]=$j
+		  if [ ! -f $(echo $j | sed 's/\(.*\)\..*/\1/').exv ]; then
+		  	EXV_COMMANDS+="exiv2 -qea $j\n"
+		  fi
+		  CLEANUP_COMMANDS+="rm $(echo $j | sed 's/\(.*\)\..*/\1/').exv\n"
 		done
 		
 		# For everything in the shoot folder
@@ -43,7 +49,7 @@ for i in */; do
 		  # Check to make sure it's a page's directory and not a random file
 		  if [[ -d "$j" ]]; then
 			# Print name to stderr and clear out RGB arrays
-			echo "$j" 1>&2
+			printf "\r$j          " 1>&2
 			export RED=""
 			export GREEN=""
 			export BLUE=""
@@ -56,6 +62,7 @@ for i in */; do
 			  for k in "$j"/Processed/*.tif; do
 				# Set flatfielded image filepath to new flatfielded folder
 				OUTFILE="$output_folder/$vol_name/flatfielded/$page_name/$(basename $k)"
+				NOEXT_OUT=$(echo $OUTFILE | sed 's/\(.*\)\..*/\1/')
 				
 				# Gets wavelength of file
 				WAVELENGTH=$(exiv2 -qpa $k | grep Exif.Photo.SpectralSensitivity|awk '{print substr($0, index($0,$4))}')
@@ -77,7 +84,8 @@ for i in */; do
 				  if [[ -n $wavelengths[$WAVELENGTH] ]]; then
 					# Build a flatten command and add it to the an array of flatfields commands
 					FLATFIELD=$wavelengths[$WAVELENGTH]
-					FLATFIELD_COMMANDS+="~/source/multispectral-toolkit/flatfield/flatten $FLATFIELD $k $OUTFILE\n"
+					NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
+					FLATFIELD_COMMANDS+="~/source/multispectral-toolkit/flatfield/flatten $FLATFIELD $k $OUTFILE && cp $NOEXT_FLAT.exv $NOEXT_OUT.exv && exiv2 -ia $NOEXT_OUT.tif && rm $NOEXT_OUT.exv\n"
 				  else
 					echo "Skipping $k, no wavelength match in flatfields" 1>&2
 				  fi
@@ -92,10 +100,10 @@ for i in */; do
 				mkdir -p $output_folder/$vol_name/rgb
 				mkdir -p $output_folder/$vol_name/rgb_jpg
 				if [[ ! -e $output_folder/$vol_name/rgb/$page_name.tif ]]; then 
-				RGB_COMMANDS+="convert $RED $GREEN $BLUE -channel RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
+				RGB_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
 				fi
-				if [[ ! -e $output_folder/$vol_name/rgb/$page_name.jpg ]]; then
-				RGB_JPG_COMMANDS+="convert $output_folder/$vol_name/rgb/$page_name.tif $output_folder/$vol_name/rgb/$page_name.jpg\n"
+				if [[ ! -e $output_folder/$vol_name/rgb_jpg/$page_name.jpg ]]; then
+				RGB_JPG_COMMANDS+="convert -quiet $output_folder/$vol_name/rgb/$page_name.tif $output_folder/$vol_name/rgb_jpg/$page_name.jpg\n"
 				fi
 			  else
 				echo "Skipping RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" 1>&2
@@ -115,8 +123,18 @@ for i in */; do
 	unset wavelengths
 done
 
+#echo "EXV_COMMANDS" >> $1
+#echo $EXV_COMMANDS >> $1
+#echo >> $1
+#echo $CLEANUP_COMMANDS >>$1
+#echo
+#echo $FLATFIELD_COMMANDS >> $1
+#exit
 
 # Run all accumulated commands at once
+echo
+echo "$(date +"%F") :: $(date +"%T") :: Extracting metadata..." 1>&2
+echo $EXV_COMMANDS | parallel -eta -u -j 8
 echo
 echo "$(date +"%F") :: $(date +"%T") :: Flatfielding..." 1>&2
 echo $FLATFIELD_COMMANDS | parallel --eta -u -j 8
@@ -126,3 +144,6 @@ echo $RGB_COMMANDS | parallel --eta -u -j 8
 echo
 echo "$(date +"%F") :: $(date +"%T") :: JPG..." 1>&2
 echo $RGB_JPG_COMMANDS | parallel --eta -u -j 8
+echo
+echo "$(date +"%F") :: $(date +"%T") :: Cleaning up..." 1>&2
+echo $CLEANUP_COMMANDS | parallel -eta -u -j 8
