@@ -81,11 +81,15 @@ echo >> $output_folder/$setuplog
 
 ${HOME}/source/multispectral-toolkit/bin/mstk_flats.sh "$output_folder/$setuplog"
 
-echo Flatfielding Complete
+echo
+echo "$(date +"%F") :: $(date +"%T") :: Flatfielding Complete"
 
 cd $output_folder
 
 ${HOME}/source/multispectral-toolkit/bin/mstk_spectral.sh
+
+echo
+echo "$(date +"%F") :: $(date +"%T") :: Multispectral Rendering Complete"
 
 cd $output_folder
 

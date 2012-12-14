@@ -96,10 +96,10 @@ for i in */; do
 			  
 			  # If we found R,G, & B pictures...
 			  if [[ -n $RED && -n $GREEN && -n $BLUE ]]; then
-				echo "Performing RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" >> $1
 				mkdir -p $output_folder/$vol_name/rgb
 				mkdir -p $output_folder/$vol_name/rgb_jpg
 				if [[ ! -e $output_folder/$vol_name/rgb/$page_name.tif ]]; then 
+				echo "Performing RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" >> $1
 				RGB_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
 				fi
 				if [[ ! -e $output_folder/$vol_name/rgb_jpg/$page_name.jpg ]]; then

@@ -20,24 +20,26 @@ for i in */; do
 			cd $j
 			PAGE=$PWD
 			folio="$(basename $j)"
-				if [[ ! -d $VOLUME/png ]]; then
+				if [[ ! -d $VOLUME/png/$folio ]]; then
 					mkdir -p $VOLUME/png/$folio
 				fi
 			for k in *.tif; do
 				output="$(basename "$k" | sed 's/\(.*\)\..*/\1/').png"
 				if [[ ! -e $VOLUME/png/$folio/$output ]]; then
 					printf "\r$(date +"%F") :: $(date +"%T") :: Converting "$(basename $k)"..."
-					convert -quiet $k -depth 16 $VOLUME/png/$folio/$output
+					convert $PAGE/$k -quiet -depth 16 $VOLUME/png/$folio/$output
 				fi
 			done
 				
 		if [[ ! -d $VOLUME/png/$folio ]]; then
 			echo
+			echo
 			echo "$(date +"%F") :: $(date +"%T")" :: "$folio": No PNGs found
 		else
 			if [[ ! -d $VOLUME/multispectral/$folio ]]; then
 				echo
-				echo "Beginning work on $folio"
+				echo
+				echo "$(date +"%F") :: $(date +"%T") :: Beginning work on $folio"
 				
 					if [[ ! -d $VOLUME/multispectral/$folio ]]; then
 						mkdir -p $VOLUME/multispectral/$folio
@@ -48,16 +50,16 @@ for i in */; do
 					fi
 				
 				cd $VOLUME/png/$folio/
-						
+				echo		
 				echo "$(date +"%F") :: $(date +"%T")" :: Creating volume...
 					unu join -a 2 -i *_002.png *_014.png *_003.png *_004.png *_005.png *_006.png *_007.png *_008.png *_009.png *_010.png *_011.png *_012.png *_013.png -o $VOLUME/nrrd/$folio/$folio.nrrd
-				
+				echo
 				echo "$(date +"%F") :: $(date +"%T")" :: Applying measures...
 					for l in min max mean median variance skew intc slope error sd product sum L1 L2 Linf; do echo $l; done | parallel --eta -u unu project -a 2 -i $VOLUME/nrrd/$folio/$folio.nrrd -o $VOLUME/nrrd/$folio/$folio-f-m-{}.nrrd -m {}
-				
+				echo
 				echo "$(date +"%F") :: $(date +"%T")" :: Remapping and quantizing results...
 					if [ ! -f $VOLUME/nrrd/darkhue.txt ]; then
-						wget -P $VOLUME/nrrd/ http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt
+						wget -nv -P $VOLUME/nrrd/ http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt
 					fi
 					for m in $VOLUME/nrrd/$folio/*-f-m-*.nrrd; do echo $m; done | parallel --eta -u "unu rmap -m $VOLUME/nrrd/darkhue.txt -i {} | unu quantize -b 8 -o $VOLUME/multispectral/$folio/{/.}-noheq.png; unu heq -b 3000 -a 0.5 -i {} | unu rmap -m $VOLUME/nrrd/darkhue.txt | unu quantize -b 8 -o $VOLUME/multispectral/$folio/{/.}-heq.png"
 				
@@ -68,7 +70,6 @@ for i in */; do
 		fi
 		
 		cd $VOLUME/flatfielded
-		
 		done
 	cd $ROOT
 done
