@@ -49,7 +49,8 @@ for i in */; do
 		  # Check to make sure it's a page's directory and not a random file
 		  if [[ -d "$j" ]]; then
 			# Print name to stderr and clear out RGB arrays
-			printf "\r$j          " 1>&2
+			printf "\r																													"
+			printf "\r$j" 1>&2
 			export RED=""
 			export GREEN=""
 			export BLUE=""

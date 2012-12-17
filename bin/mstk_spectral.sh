@@ -26,6 +26,7 @@ for i in */; do
 			for k in *.tif; do
 				output="$(basename "$k" | sed 's/\(.*\)\..*/\1/').png"
 				if [[ ! -e $VOLUME/png/$folio/$output ]]; then
+					printf "\r																													"
 					printf "\r$(date +"%F") :: $(date +"%T") :: Converting "$(basename $k)"..."
 					convert $PAGE/$k -quiet -depth 16 $VOLUME/png/$folio/$output
 				fi
