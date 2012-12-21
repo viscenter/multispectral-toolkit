@@ -34,7 +34,11 @@ All examples refer to what each term would represent if one was imaging each pag
   * _Collection_ - A collection of volumes. This is considered the intended output of the multispectral-toolkit.
   It is easiest to think of it as a digital library. When you navigate to a particular digital collection,
   you will see folders for each volume imaged. Folios are collected inside of their corresponding volumes,
-  regardless of the day on which they were imaged. _(e.g. A folder containing TheIliad, TheOdyssey, etc.)_  
+  regardless of the day on which they were imaged. _(e.g. A folder containing TheIliad, TheOdyssey, etc.)_
+  
+  * _Daily_ - A folder representing a day's worth of shooting. Each Daily folder should contain a Flatfields
+  folder as well as at least one Folio folder. See **The "Standard" EurekaVision Workflow: _FILE MANAGEMENT_** for
+  more information.
   
 ## The "Standard" EurekaVision Workflow ##
   
@@ -157,13 +161,11 @@ The goal of `mstk.sh` is to minimize the need for this oversight as much as poss
 file management and script output so that the processing of any data set will produce predictable and usable
 results. It is also meant to simplify post-processing such that a minimally trained user could oversee the
 processing of data sets.  
-  
-**Running mstk.sh**  
-  
+
 `mstk.sh` should be run from inside the folder containing all of the Daily folders to be processed. It needs no
 arguments to run.  
   
-  `$ ~/source/multispectral-toolkit/mstk.sh`  
+> $ ~/source/multispectral-toolkit/mstk.sh  
   
 Upon running `mstk.sh`, you will be asked to choose an Output Location. This is where all processed images and files
 will be placed. You can manually type the path to a location or you can drag-and-drop a folder onto the Terminal
@@ -175,6 +177,17 @@ unwritable file errors, ensure you have full permissions to write to the directo
 the processing procedure. `mstk.sh` will only attempt to write copyright information to files whose EXIF copyright field does
 not already match the pattern created during this input phase. Make sure to double-check the spelling! Processing will begin
 after copyright information has been confirmed. _NOTE: Unlike many of the other steps in the multispectral-toolkit where the
-`mstk.sh` versions of script are specialized versions of preexisting utilities, the copyrighting functions of `mstk.sh` are
+`mstk.sh` versions of scripts are specialized versions of preexisting utilities, the copyrighting functions of `mstk.sh` are
 shared with `copyrighter.sh`. If you find you need to cancel the copyright procedure in the middle of post-processing, it
-is usually better to run `copyrighter.sh` in your output folder than to rerun `mstk.sh`._
+is usually better to run `copyrighter.sh` in your output folder than to rerun `mstk.sh`._  
+  
+### applyflats.sh ###
+  
+`applyflats.sh` flat-field corrects all folios in a single Daily folder using flatfields provided to the script.
+The script is run from inside the flatfields folio folder. It takes the corresponding Daily folder as its argument.  
+  
+> $ cd ~/MVDaily_20121203/FLATS\_TODAY  
+> $ ~/source/multispectral\-toolkit/applyflats.sh ~/MVDaily\_20121203  
+  
+Flatfield, RGB, and RGB JPG outputs are placed in their corresponding folders inside the flatfields folder from
+which the script was run.

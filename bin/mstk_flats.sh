@@ -59,39 +59,57 @@ for i in */; do
 			if [[ -d "$j"/Processed ]]; then
 			  # In the flatfields folder, make a new folder for flatfield processed images, then a new folder for the page being processed
 			  mkdir -p $output_folder/$vol_name/flatfielded/$page_name
+			  mkdir -p $output_folder/$vol_name/png/$page_name
 			  # For every tif inside the page's processed folder...
 			  for k in "$j"/Processed/*.tif; do
 				# Set flatfielded image filepath to new flatfielded folder
-				OUTFILE="$output_folder/$vol_name/flatfielded/$page_name/$(basename $k)"
-				NOEXT_OUT=$(echo $OUTFILE | sed 's/\(.*\)\..*/\1/')
+				OUTFILE_TIF="$output_folder/$vol_name/flatfielded/$page_name/$(basename $k)"
+				OUTFILE_PNG="$output_folder/$vol_name/png/$page_name/$(basename $k | sed 's/\(.*\)\..*/\1/').png"
+				NOEXT_TIFOUT=$(echo $OUTFILE_TIF | sed 's/\(.*\)\..*/\1/')
+				NOEXT_PNGOUT=$(echo $OUTFILE_PNG | sed 's/\(.*\)\..*/\1/')
 				
 				# Gets wavelength of file
 				WAVELENGTH=$(exiv2 -qpa $k | grep Exif.Photo.SpectralSensitivity|awk '{print substr($0, index($0,$4))}')
 				
 				# If it finds an RGB wavelength, stores file path for processing
 				if [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "638nm" ]]; then
-				  export RED=$OUTFILE
+				  export RED=$OUTFILE_TIF
 				elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "535nm" ]]; then
-				  export GREEN=$OUTFILE
+				  export GREEN=$OUTFILE_TIF
 				elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "465nm" ]]; then
-				  export BLUE=$OUTFILE
+				  export BLUE=$OUTFILE_TIF
 				else
 				  # echo "$WAVELENGTH not a primary color" 1>&2
 				fi
 		
-				# If flatfielded output doesn't already exist...
-				if [[ ! -e $OUTFILE ]]; then
+				# If flatfielded TIF output doesn't already exist...
+				if [[ ! -e $OUTFILE_TIF ]]; then
 				  # And if the flatfields folder has a matching wavelength...
 				  if [[ -n $wavelengths[$WAVELENGTH] ]]; then
 					# Build a flatten command and add it to the an array of flatfields commands
 					FLATFIELD=$wavelengths[$WAVELENGTH]
 					NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
-					FLATFIELD_COMMANDS+="~/source/multispectral-toolkit/flatfield/flatten $FLATFIELD $k $OUTFILE && cp $NOEXT_FLAT.exv $NOEXT_OUT.exv && exiv2 -ia $NOEXT_OUT.tif && rm $NOEXT_OUT.exv\n"
+					FLATFIELDTIF_COMMANDS+="~/source/multispectral-toolkit/flatfield/pngflatten $FLATFIELD $k $OUTFILE_TIF && cp $NOEXT_FLAT.exv $NOEXT_TIFOUT.exv && exiv2 -ia $NOEXT_TIFOUT.tif && rm $NOEXT_TIFOUT.exv\n"
 				  else
 					echo "Skipping $k, no wavelength match in flatfields" 1>&2
 				  fi
 				else
-				  echo "Skipping $k, $OUTFILE already exists" 1>&2
+				  echo "Skipping $k, $OUTFILE_TIF already exists" 1>&2
+				fi
+				
+				# If flatfielded PNG output doesn't already exist...
+				if [[ ! -e $OUTFILE_PNG ]]; then
+				  # And if the flatfields folder has a matching wavelength...
+				  if [[ -n $wavelengths[$WAVELENGTH] ]]; then
+					# Build a flatten command and add it to the an array of flatfields commands
+					FLATFIELD=$wavelengths[$WAVELENGTH]
+					NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
+					FLATFIELDPNG_COMMANDS+="~/source/multispectral-toolkit/flatfield/pngflatten $FLATFIELD $k $OUTFILE_PNG && cp $NOEXT_FLAT.exv $NOEXT_PNGOUT.exv && exiv2 -ia $NOEXT_PNGOUT.png && rm $NOEXT_PNGOUT.exv\n"
+				  else
+					echo "Skipping $k, no wavelength match in flatfields" 1>&2
+				  fi
+				else
+				  echo "Skipping $k, $OUTFILE_PNG already exists" 1>&2
 				fi
 			  done
 			  
@@ -137,8 +155,11 @@ echo
 echo "$(date +"%F") :: $(date +"%T") :: Extracting metadata..." 1>&2
 echo $EXV_COMMANDS | parallel -eta -u -j 8
 echo
-echo "$(date +"%F") :: $(date +"%T") :: Flatfielding..." 1>&2
-echo $FLATFIELD_COMMANDS | parallel --eta -u -j 8
+echo "$(date +"%F") :: $(date +"%T") :: Flatfielding TIFs..." 1>&2
+echo $FLATFIELDTIF_COMMANDS | parallel --eta -u -j 8
+echo
+echo "$(date +"%F") :: $(date +"%T") :: Flatfielding PNGs..." 1>&2
+echo $FLATFIELDPNG_COMMANDS | parallel --eta -u -j 8
 echo
 echo "$(date +"%F") :: $(date +"%T") :: RGB..." 1>&2
 echo $RGB_COMMANDS | parallel --eta -u -j 8

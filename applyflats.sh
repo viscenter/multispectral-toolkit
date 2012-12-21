@@ -2,7 +2,7 @@
 
 # applyflats - Flatfield multispectral images and create RGB versions of all folios.
 # Run from inside the main flatfields folder. Requires the corresponding Daily folder as its only argument. For example:
-# $ cd ~/MVDaily_20121203/TODAYS_FLATS
+# $ cd ~/MVDaily_20121203/FLATS_TODAY
 # $ ~/source/multispectral-toolkit/applyflats.sh ~/MVDaily_20121203
 
 echo

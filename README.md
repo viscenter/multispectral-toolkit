@@ -6,6 +6,7 @@ A set of tools for organizing and processing multispectral data.
 
 **Latest Updates**
 
+* 12.20.2012 - mstk.sh: Flatfielded images and PNGs are now created using pngflatten. flatten currently being kept for applyflats.sh support.
 * 12.13.2012 - First version of mstk and its subscripts. mstk takes a folder of dailies and outputs a fully processed collection.
 * 12.7.2012 - Added To-Do list. File reorganization in anticipation of future changes.
 * 12.5.2012 - Update to Copyrighter to work with either single volumes or collections of volumes.
@@ -20,14 +21,14 @@ A set of tools for organizing and processing multispectral data.
 $ cd ~/source  
 $ git clone https://github.com/csparker247/multispectral-toolkit.git  
 $ cd ~/source/multispectral-toolkit/flatfield  
-$ make flatten
-* Invoke all scripts from inside the folders you want to process. Check the header of each script for more information. 
+$ make
+* Invoke all scripts from inside the folders you want to process. Check the MANUAL and the header of each script for more information. 
 
 
 **Known Issues/Special Notes**
 
-* Making flatten requires OpenCV to be installed.
-* Make sure to build ImageMagick with TIFF support.
+* Making flatten and pngflatten requires OpenCV to be installed.
+* ImageMagick should be compiled with TIFF support.
 * Despot can cause irregularities when rendering RGB and Multispectral images. As such, the original flats are always kept. Use with caution.
 
 **Other Software**

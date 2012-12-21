@@ -37,12 +37,12 @@ echo
 while true; do
 	read -p "Enter output location (NOTE: Folders can be dropped onto the Terminal window): " output_folder
 	echo $output_folder
-	if  [[ -d $output_folder ] && [ -w $output_folder ]]; then
+	if  [[ -d $output_folder && -w $output_folder ]]; then
 		echo
 		echo "You have selected $output_folder"
 		break
 	else
-		if [[ ! -d $output_folder ] || [ ! -w $output_folder ]]; then
+		if [[ ! -d $output_folder || ! -w $output_folder ]]; then
 		echo "This is not a valid selection. Please select again."
 		echo
 		continue
@@ -105,7 +105,7 @@ export copyright_year
 ${HOME}/source/multispectral-toolkit/bin/cpwrtr_collection.sh
 
 echo
-echo -----------------
-echo ALL WORK COMPLETE
-echo -----------------
+echo ----------------------
+echo "  ALL WORK COMPLETE"
 echo "$(date +"%F") :: $(date +"%T")"
+echo ----------------------

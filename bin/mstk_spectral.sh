@@ -20,25 +20,25 @@ for i in */; do
 			cd $j
 			PAGE=$PWD
 			folio="$(basename $j)"
-				if [[ ! -d $VOLUME/png/$folio ]]; then
-					mkdir -p $VOLUME/png/$folio
-				fi
-			for k in *.tif; do
-				output="$(basename "$k" | sed 's/\(.*\)\..*/\1/').png"
-				if [[ ! -e $VOLUME/png/$folio/$output ]]; then
-					printf "\r																													"
-					printf "\r$(date +"%F") :: $(date +"%T") :: Converting "$(basename $k)"..."
-					convert $PAGE/$k -quiet -depth 16 $VOLUME/png/$folio/$output
-				fi
-			done
+			
+## Legacy PNG conversion via ImageMagick
+#				if [[ ! -d $VOLUME/png/$folio ]]; then
+#					mkdir -p $VOLUME/png/$folio
+#				fi
+#			for k in *.tif; do
+#				output="$(basename "$k" | sed 's/\(.*\)\..*/\1/').png"
+#				if [[ ! -e $VOLUME/png/$folio/$output ]]; then
+#					printf "\r																													"
+#					printf "\r$(date +"%F") :: $(date +"%T") :: Converting "$(basename $k)"..."
+#					convert $PAGE/$k -quiet -depth 16 $VOLUME/png/$folio/$output
+#				fi
+#			done
 				
 		if [[ ! -d $VOLUME/png/$folio ]]; then
-			echo
 			echo
 			echo "$(date +"%F") :: $(date +"%T")" :: "$folio": No PNGs found
 		else
 			if [[ ! -d $VOLUME/multispectral/$folio ]]; then
-				echo
 				echo
 				echo "$(date +"%F") :: $(date +"%T") :: Beginning work on $folio"
 				
