@@ -10,17 +10,14 @@ echo -----------------------------------------------
 echo
 
 ROOT="$PWD"
-
 for i in */; do
 	cd $i
 	VOLUME="$PWD"
-	
 	cd $VOLUME/flatfielded
 		for j in */; do
 			cd $j
 			PAGE=$PWD
 			folio="$(basename $j)"
-			
 ## Legacy PNG conversion via ImageMagick
 #				if [[ ! -d $VOLUME/png/$folio ]]; then
 #					mkdir -p $VOLUME/png/$folio
@@ -60,7 +57,12 @@ for i in */; do
 				echo
 				echo "$(date +"%F") :: $(date +"%T")" :: Remapping and quantizing results...
 					if [ ! -f $VOLUME/nrrd/darkhue.txt ]; then
-						wget -nv -P $VOLUME/nrrd/ http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt
+						if command -v wget >/dev/null; then
+							wget -nv -P $VOLUME/nrrd/ http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt
+						else
+							echo "$(date +"%F") :: $(date +"%T")" :: wget not found. Using curl...
+							curl --progress-bar http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt -o "$VOLUME/nrrd/darkhue.txt"	
+						fi
 					fi
 					for m in $VOLUME/nrrd/$folio/*-f-m-*.nrrd; do echo $m; done | parallel --eta -u "unu rmap -m $VOLUME/nrrd/darkhue.txt -i {} | unu quantize -b 8 -o $VOLUME/multispectral/$folio/{/.}-noheq.png; unu heq -b 3000 -a 0.5 -i {} | unu rmap -m $VOLUME/nrrd/darkhue.txt | unu quantize -b 8 -o $VOLUME/multispectral/$folio/{/.}-heq.png"
 				
