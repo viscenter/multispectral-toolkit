@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Add copyright information to image files.
-# Adds metadata to flatfielded, multispectral, rgb, and rgb_jpg folders.
+# Adds metadata to flatfielded, multispectral, png, rgb, and rgb_jpg folders.
 # Run on folder containing output from applyflats.sh.
 
 echo

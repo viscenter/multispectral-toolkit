@@ -40,7 +40,12 @@ else
 			for l in min max mean median variance skew intc slope error sd product sum L1 L2 Linf; do echo $l; done | parallel --eta -u unu project -a 2 -i $folio.nrrd -o $folio-f-m-{}.nrrd -m {}
 		
 		echo "$(date +"%F") :: $(date +"%T")" :: Remapping and quantizing results...
-			wget http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt
+			if command -v wget >/dev/null; then
+				wget -nv http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt
+			else
+				echo "$(date +"%F") :: $(date +"%T")" :: wget not found. Using curl...
+				curl --progress-bar http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt	
+			fi
 			for m in *-f-m-*.nrrd; do echo $m; done | parallel --eta -u "unu rmap -m darkhue.txt -i {} | unu quantize -b 8 -o {.}-noheq.png; unu heq -b 3000 -a 0.5 -i {} | unu rmap -m darkhue.txt | unu quantize -b 8 -o {.}-heq.png"
 		
 		echo "$(date +"%F") :: $(date +"%T")" :: Cleaning up...

@@ -145,7 +145,15 @@ table. The "Standard" N-shot table that the multispectral-toolkit operates under
 * 012 \- 850nm IR850  
 * 013 \- 940nm IR940  
 * 014 \- 450nm Royal Blue    
+
+## Prerequisites ##  
   
+  * OpenCV
+  * ImageMagick
+  * Exiv2
+  * teem
+  * GNU parallel
+  * flatten/pngflatten
   
 ## The Scripts ##
 ### mstk.sh ###
@@ -190,4 +198,49 @@ The script is run from inside the flatfields folio folder. It takes the correspo
 > $ ~/source/multispectral\-toolkit/applyflats.sh ~/MVDaily\_20121203  
   
 Flatfield, RGB, and RGB JPG outputs are placed in their corresponding folders inside the flatfields folder from
-which the script was run.
+which the script was run. The internal structure of these folders should remain the same for other scripts, but
+they can be moved elsewhere as needed.  
+
+_NOTE: Running `applyflats.sh` requires that you have previously built the `flatten` application. See **Prequisites**
+for more information._
+  
+### spectralize.sh ###  
+  
+`spectralize.sh` takes sets of flatfielded folios and applies various measurements to their data. The
+output is generally referred to as a "multispectral rendering". The script should be run from inside
+the `flatfielded` folder created by `applyflats.sh`. It requires no arguments.
+  
+> \# This example assumes you did not move the flatfielded folder after running applyflats.sh
+> $ cd ~/MVDaily_20121203/FLATS\_TODAY/flatfielded
+> $ cd ~/source/multispectral\-toolkit/spectralize.sh  
+  
+The output images will be placed inside a folder named `multispectral` in the same directory as the
+`flatfielded` folder.  
+  
+It's important that all files are numbered according to the "Standard" EurekaVision Workflow. Misnumbered
+files will cause `spectralize.sh` to crash. See _**METADATA**_ for more information. 
+
+_NOTE: `spectralize.sh` requires ImageMagick, teem, and GNU parallel. See **Prerequisites** for more information._  
+  
+### copyrighter.sh ###  
+  
+`copyrighter.sh` adds user-defined copyright information to the EXIF tags of an image set. The type of data you are processing
+changes where it should be executed. If you are processing a single volume, you should run it from the folder that contains 
+the `flatfielded`, `multispectral`, `png`, `rgb`, and `rgb_jpg` folders. If you are processing a collection of volumes, you
+should run it from the folder that contains the set of volume subdirectories.  
+
+> \# Single Volume, created by running applyflats.sh and spectralize.sh  
+> \# This example assumes you did not move the output folders after running applyflats.sh and spectralize.sh  
+> $ cd ~/MVDaily_20121203/FLATS\_TODAY/  
+> $ cd ~/source/multispectral\-toolkit/copyrighter.sh  
+> \# Enter Option 1\) Single Volume when prompted  
+   
+> \# Collection of Volumes, created by running mstk.sh  
+> $ cd ~/COLLECTIONS/  
+> $ cd ~/source/multispectral\-toolkit/copyrighter.sh  
+> \# Enter Option 2\) Collection of Volumes when prompted  
+
+Upon running, the script will prompt you for the copyright holder's name and the year of the copyright.
+This information will be written to the images' EXIF tags in the format "Copyright [NAME], [YEAR]. All rights reserved."
+
+_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **Prerequisites** for more information._ 
