@@ -26,10 +26,10 @@ All examples refer to what each term would represent if one was imaging each pag
   * _Folio_ - A particular shot of a document. Most often this refers to a single page in a book.
   Some documents have pages/leafs that must be imaged in pieces. In the multispectral-toolkit, each of
   these pieces are treated as a separate folio. Some scripts simply refer to them as a page. Each folio
-  should have a unique identifying number (see **_<a href="#management">File Management</a>_**). _(e.g. Page 53 in The Iliad)_  
+  should have a unique identifying number (see **_[File Management](#management)_**). _(e.g. Page 53 in The Iliad)_  
   
   * _Volume_ - A collection of folios from the same source. Most often this refers to a particular book.
-  Each volume should have a unique name (see **_<a href="#management">File Management</a>_**). _(e.g. The Iliad)_  
+  Each volume should have a unique name (see **_[File Management](#management)_**). _(e.g. The Iliad)_  
   
   * _Collection_ - A collection of volumes. This is considered the intended output of the multispectral-toolkit.
   It is easiest to think of it as a digital library. When you navigate to a particular digital collection,
@@ -37,16 +37,16 @@ All examples refer to what each term would represent if one was imaging each pag
   regardless of the day on which they were imaged. _(e.g. A folder containing TheIliad, TheOdyssey, etc.)_
   
   * _Daily_ - A folder representing a day's worth of shooting. Each Daily folder should contain a Flatfields
-  folder as well as at least one Folio folder. See **_<a href="#management">File Management</a>_** for
+  folder as well as at least one Folio folder. See **_[File Management](#management)_** for
   more information.
   
 ## The "Standard" EurekaVision Workflow ##
   
 The EurekaVision workflow is highly customizable, so the "standard" referred to by this documentation
 represents the workflow used by the VisCenter during development of the multispectral-toolkit. The most
-important aspects of this workflow are **_<a href="#management">File Management</a>_**, **_<a href="#flatfields">Flatfields</a>_**, and **_<a href="#metadata">Metadata</a>_**.  
+important aspects of this workflow are **_[File Management](#management)_**, **_[Flatfields](#flatfields)_**, and **_[Metadata](#metadata)_**.  
   
-<a id="management">_**FILE MANAGEMENT**_</a>:  
+<a id="management" />_**FILE MANAGEMENT**_:  
 The scripts in the multispectral-toolkit assume a very specific folder structure and file naming scheme.
 It's usually much easier to match your file management to this scheme from the start rather than having
 to go back and rename files later.  
@@ -76,7 +76,7 @@ The TIFFs inside of the Processed folder also have their own naming conventions.
 imaging system, they will often automatically be named `[Volume ID]-[Folio ID #]_###.tif`. Note
 the sequential numbering for each exposure and the file extension. multispectral-toolkit expects 14
 exposures in this Processed folder, each exposed under specific circumstances and embedded with certain
-metadata. This will be discussed in more detail in the **_<a href="#metadata">Metadata</a>_** section. For filename purposes, these
+metadata. This will be discussed in more detail in the **_[Metadata](#metadata)_** section. For filename purposes, these
 sequential numbers should be `001-014`. The file extension should also be the three-letter `.tif` and not the
 four-letter `.tiff` variant.
  
@@ -88,7 +88,7 @@ your files. Spaces, punctuation, and other special characters can cause issues. 
 to only use the A\-Z characters, numbers, underscores, and dashes.  
   
   
-<a id="flatfields">_**FLATFIELDS**_</a>:  
+<a id="flatfields" />_**FLATFIELDS**_:  
 If you are unfamiliar with flat-field correction, I suggest learning a bit about it from its [Wikipedia page](http://en.wikipedia.org/wiki/Flat-field_correction).
 For the EurekaVision workflow, flatfields are shots of a blank or all-white scene, exposed in the same
 exposure conditions in which subsequent imaging will occur. These flatfields then represent "control"
@@ -110,10 +110,10 @@ treat these changes as the time to switch to a new Dailies folder, acquiring a n
 appropriately.
  
 One last note: Flatfields should also be numbered 001-014, corresponding to the exposure sequence for
-folio images. See the **_<a href="#metadata">Metadata</a>_** section for more information.  
+folio images. See the **_[Metadata](#metadata)_** section for more information.  
   
   
-<a id="metadata">_**METADATA**_</a>:  
+<a id="metadata" />_**METADATA**_:  
 Each image acquired using the "Standard" EurekaVision workflow is embedded with metadata in EXIF tags. For
 the multispectral-toolkit, the most relevant information is the exposure information, particularly the
 wavelength used to expose the image. The VisCenter workflow involves exposing a set of images exposed
@@ -209,7 +209,7 @@ Flatfield, RGB, and RGB JPG outputs are placed in their corresponding folders in
 which the script was run. The internal structure of these folders should remain the same for other scripts, but
 they can be moved elsewhere as needed.  
 
-_NOTE: Running `applyflats.sh` requires that you have previously built the `flatten` application. See **<a href="#prerequisites">Prerequisites</a>**
+_NOTE: Running `applyflats.sh` requires that you have previously built the `flatten` application. See **[Prerequisites]**(#prereqs)
 for more information._
   
 ### spectralize.sh ###
@@ -226,9 +226,9 @@ The output images will be placed inside a folder named `multispectral` in the sa
 `flatfielded` folder.  
   
 It's important that all files are numbered according to the "Standard" EurekaVision Workflow. Misnumbered
-files will cause `spectralize.sh` to crash. See **_<a href="#metadata">Metadata</a>_** for more information. 
+files will cause `spectralize.sh` to crash. See **_[Metadata](#metadata)_** for more information. 
 
-_NOTE: `spectralize.sh` requires ImageMagick, teem, and GNU parallel. See **<a href="#prerequisites">Prerequisites</a>** for more information._  
+_NOTE: `spectralize.sh` requires ImageMagick, teem, and GNU parallel. See **[Prerequisites]**(#prereqs) for more information._  
   
 ### copyrighter.sh ###
   
@@ -251,4 +251,4 @@ should run it from the folder that contains the set of volume subdirectories.
 Upon running, the script will prompt you for the copyright holder's name and the year of the copyright.
 This information will be written to the images' EXIF tags in the format "Copyright [NAME], [YEAR]. All rights reserved."
 
-_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **<a href="#prerequisites">Prerequisites</a>** for more information._ 
+_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **[Prerequisites]**(#prereqs) for more information._ 
