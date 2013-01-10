@@ -153,7 +153,7 @@ required dependencies. First go to [Homebrew's website](http://mxcl.github.com/h
 the install instructions. From there, run the following commands to install all the dependencies.
 
 > \# Install OpenCV, teem, exiv2, GNU parallel  
-> $ brew install opencv teem exiv2 parallel imagemagick --use-tiff
+> $ brew install opencv teem exiv2 parallel imagemagick --use-tiff  
 > \# Install flatten/pngflatten  
 > $ cd ~/source/multispectral-toolkit/flatfield  
 > $ make  
