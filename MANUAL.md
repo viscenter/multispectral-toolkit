@@ -146,14 +146,22 @@ table. The "Standard" N-shot table that the multispectral-toolkit operates under
 * 013 \- 940nm IR940  
 * 014 \- 450nm Royal Blue    
 
-## Prerequisites ##  
+## Prerequisites ##
   
-  * OpenCV
-  * ImageMagick
-  * Exiv2
-  * teem
-  * GNU parallel
-  * flatten/pngflatten
+Since the toolkit is primarily developed on OSX, we use Homebrew to install and update all the 
+required dependencies. First go to [Homebrew's website](http://mxcl.github.com/homebrew/) and follow
+the install instructions. From there, run the following commands to install all the dependencies.
+
+> \# Install OpenCV, teem, exiv2, GNU parallel  
+> $ brew install opencv teem exiv2 parallel imagemagick --use-tiff
+> \# Install flatten/pngflatten  
+> $ cd ~/source/multispectral-toolkit/flatfield  
+> $ make  
+  
+_NOTE: If you have ffmpeg installed (or any other package that requires libav), OpenCV will link against
+your specific build of libav. If libav is later updated (as it would be if you updated ffmpeg), this
+will cause OpenCV to crash. Make sure that if you update your libav packages, you also reinstall OpenCV
+at the same time._
   
 ## The Scripts ##
 ### mstk.sh ###
