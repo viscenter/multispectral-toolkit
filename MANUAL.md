@@ -209,7 +209,7 @@ Flatfield, RGB, and RGB JPG outputs are placed in their corresponding folders in
 which the script was run. The internal structure of these folders should remain the same for other scripts, but
 they can be moved elsewhere as needed.  
 
-_NOTE: Running `applyflats.sh` requires that you have previously built the `flatten` application. See **[Prerequisites]**(#prereqs)
+_NOTE: Running `applyflats.sh` requires that you have previously built the `flatten` application. See **[Prerequisites](#prerequisites)**
 for more information._
   
 ### spectralize.sh ###
@@ -228,7 +228,7 @@ The output images will be placed inside a folder named `multispectral` in the sa
 It's important that all files are numbered according to the "Standard" EurekaVision Workflow. Misnumbered
 files will cause `spectralize.sh` to crash. See **_[Metadata](#metadata)_** for more information. 
 
-_NOTE: `spectralize.sh` requires ImageMagick, teem, and GNU parallel. See **[Prerequisites]**(#prereqs) for more information._  
+_NOTE: `spectralize.sh` requires ImageMagick, teem, and GNU parallel. See **[Prerequisites](#prerequisites)** for more information._  
   
 ### copyrighter.sh ###
   
@@ -251,4 +251,4 @@ should run it from the folder that contains the set of volume subdirectories.
 Upon running, the script will prompt you for the copyright holder's name and the year of the copyright.
 This information will be written to the images' EXIF tags in the format "Copyright [NAME], [YEAR]. All rights reserved."
 
-_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **[Prerequisites]**(#prereqs) for more information._ 
+_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **[Prerequisites](#prerequisites)** for more information._ 
