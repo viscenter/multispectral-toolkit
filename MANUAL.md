@@ -147,7 +147,7 @@ table. The "Standard" N-shot table that the multispectral-toolkit operates under
 * 014 \- 450nm Royal Blue    
 
 ## Prerequisites ##
-  
+    
 Since the toolkit is primarily developed on OSX, we use Homebrew to install and update all the 
 required dependencies. First go to [Homebrew's website](http://mxcl.github.com/homebrew/) and follow
 the install instructions. From there, run the following commands to install all the dependencies.
@@ -212,7 +212,7 @@ they can be moved elsewhere as needed.
 _NOTE: Running `applyflats.sh` requires that you have previously built the `flatten` application. See **Prequisites**
 for more information._
   
-### spectralize.sh ###  
+### spectralize.sh ###
   
 `spectralize.sh` takes sets of flatfielded folios and applies various measurements to their data. The
 output is generally referred to as a "multispectral rendering". The script should be run from inside
@@ -230,7 +230,7 @@ files will cause `spectralize.sh` to crash. See _**METADATA**_ for more informat
 
 _NOTE: `spectralize.sh` requires ImageMagick, teem, and GNU parallel. See **Prerequisites** for more information._  
   
-### copyrighter.sh ###  
+### copyrighter.sh ###
   
 `copyrighter.sh` adds user-defined copyright information to the EXIF tags of an image set. The type of data you are processing
 changes where it should be executed. If you are processing a single volume, you should run it from the folder that contains 
@@ -251,4 +251,4 @@ should run it from the folder that contains the set of volume subdirectories.
 Upon running, the script will prompt you for the copyright holder's name and the year of the copyright.
 This information will be written to the images' EXIF tags in the format "Copyright [NAME], [YEAR]. All rights reserved."
 
-_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **Prerequisites** for more information._ 
+_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See <a href="#prerequisites">**Prerequisites**</a> for more information._ 
