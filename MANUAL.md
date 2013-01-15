@@ -154,7 +154,7 @@ the install instructions. From there, run the following commands to install all 
 
 > \# Install OpenCV, teem, exiv2, GNU parallel  
 > $ brew install opencv teem exiv2 parallel imagemagick --use-tiff  
-> \# Install flatten/pngflatten  
+> \# Install flatten, pngflatten, despot  
 > $ cd ~/source/multispectral-toolkit/flatfield  
 > $ make  
   
@@ -251,4 +251,8 @@ should run it from the folder that contains the set of volume subdirectories.
 Upon running, the script will prompt you for the copyright holder's name and the year of the copyright.
 This information will be written to the images' EXIF tags in the format "Copyright [NAME], [YEAR]. All rights reserved."
 
-_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **[Prerequisites](#prerequisites)** for more information._ 
+_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **[Prerequisites](#prerequisites)** for more information._  
+  
+### despot.sh ###
+  
+COMING SOON

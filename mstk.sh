@@ -1,8 +1,6 @@
 #!/bin/sh
 
 # mstk - Fully automated processing of daily folders.
-# This script will reorganize
-# Run on folder containing output from applyflats.sh.
 
 echo
 echo -------------------------------------------------------

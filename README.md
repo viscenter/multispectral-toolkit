@@ -6,6 +6,7 @@ A set of tools for organizing and processing multispectral data.
 
 **Latest Updates**
 
+* 1.15.2013 - despot now uses in-painting via OpenCV. Spot isolation needs a lot of work.
 * 12.20.2012 - mstk.sh: Flatfielded images and PNGs are now created using pngflatten. flatten currently being kept for applyflats.sh support.
 * 12.13.2012 - First version of mstk and its subscripts. mstk takes a folder of dailies and outputs a fully processed collection.
 * 12.7.2012 - Added To-Do list. File reorganization in anticipation of future changes.

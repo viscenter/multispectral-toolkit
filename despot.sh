@@ -13,27 +13,24 @@ echo -------------------------------
 echo "    Hit CTRL + C to exit."
 echo
 
+echo "$(date +"%F") :: $(date +"%T") :: Accumulating list of images..." 1>&2
+
 for i in *.tif; do
 
-outfile="$(basename "$i" | sed 's/\(.*\)\..*/\1/')"
+	outfile="$(basename "$i" | sed 's/\(.*\)\..*/\1/')"
 
-if [[ ! -d "$outfile"-store ]]; then
-	mkdir "$outfile"-store
-fi
+		if [[ ! -d "$outfile"-store ]]; then
+			mkdir "$outfile"-store
+		fi
 
-convert -quiet -strip "$i" -threshold 65% "$outfile"_diff_mask1.tif
-convert "$outfile"_diff_mask1.tif -negate -morphology Dilate Octagon "$outfile"_diff_mask2.tif
-convert -quiet -strip "$i" \( "$outfile"_diff_mask2.tif -negate \) -alpha off -compose CopyOpacity -composite -channel RGBA -blur 0x2 +channel -alpha off "$outfile"_diff_fill.tif
-convert -quiet -strip "$i" "$outfile"_diff_fill.tif "$outfile"_diff_mask2.tif -composite "$outfile"_removed.tif
-
-exiv2 -ea $i 
-mv "$outfile".exv "$outfile"_removed.exv
-exiv2 -ia "$outfile"_removed.tif
-
-mv -f -v "$i" "$outfile"-store/"$outfile".tif
-mv -f -v "$outfile"_diff_mask1.tif "$outfile"-store/"$outfile"_diff_mask1.tif
-mv -f -v "$outfile"_diff_mask2.tif "$outfile"-store/"$outfile"_diff_mask2.tif
-mv -f -v "$outfile"_diff_fill.tif "$outfile"-store/"$outfile"_diff_fill.tif
-mv -f -v "$outfile"_removed.exv "$outfile"-store/"$outfile"_removed.exv
-
+	DESPOTCOMMANDS+="~/source/multispectral-toolkit/flatfield/despot "$i" "$outfile"_removed.tif && exiv2 -ea $i && \
+					mv "$outfile".exv "$outfile"_removed.exv && exiv2 -ia "$outfile"_removed.tif && mv -f -v "$i" "$outfile"-store/"$outfile".tif && \
+					mv -f -v "$outfile"_removed.exv "$outfile"-store/"$outfile"_removed.exv\n"
 done
+
+echo "$(date +"%F") :: $(date +"%T") :: Running despot on all images..." 1>&2
+echo $DESPOTCOMMANDS | parallel --eta -u -j 8
+
+
+echo
+echo "$(date +"%F") :: $(date +"%T") :: Spot Removal Complete"
