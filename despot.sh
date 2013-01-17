@@ -23,9 +23,9 @@ for i in *.tif; do
 			mkdir "$outfile"-store
 		fi
 
-	DESPOTCOMMANDS+="~/source/multispectral-toolkit/flatfield/despot "$i" "$outfile"_removed.tif && exiv2 -ea $i && \
-					mv "$outfile".exv "$outfile"_removed.exv && exiv2 -ia "$outfile"_removed.tif && mv -f -v "$i" "$outfile"-store/"$outfile".tif && \
-					mv -f -v "$outfile"_removed.exv "$outfile"-store/"$outfile"_removed.exv\n"
+	DESPOTCOMMANDS+="~/source/multispectral-toolkit/flatfield/despot "$i" removed_"$outfile".tif && exiv2 -ea $i && \
+					mv "$outfile".exv removed_"$outfile".exv && exiv2 -ia removed_"$outfile".tif && mv -f -v "$i" "$outfile"-store/"$outfile".tif && \
+					mv -f -v removed_"$outfile".exv "$outfile"-store/removed_"$outfile".exv\n"
 done
 
 echo "$(date +"%F") :: $(date +"%T") :: Running despot on all images..." 1>&2

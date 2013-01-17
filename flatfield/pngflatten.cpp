@@ -23,7 +23,7 @@ int main( int argc, char *argv[] )
 	image = imread( img_file, CV_LOAD_IMAGE_ANYCOLOR | CV_LOAD_IMAGE_ANYDEPTH );
 		
 	GaussianBlur( flat_img, flat_img, cv::Size(3,3), 0, 0, BORDER_REPLICATE );
-	divide( image, flat_img, image, image.depth() == 8 ? UCHAR_MAX : USHRT_MAX );
+	divide( image, flat_img, image, image.depth() == 0 ? UCHAR_MAX : USHRT_MAX );
 	imwrite( out_file, image );
 	
   return 0;
