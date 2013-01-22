@@ -72,7 +72,7 @@ for i in */; do
 					done
 					# echo $QUANTIZECOMMANDS > $PWD/commands.txt
 					echo $QUANTIZECOMMANDS | parallel --eta -u -j 8
-				
+					QUANTIZECOMMANDS=""
 				echo	
 				echo "$(date +"%F") :: $(date +"%T")" :: "$folio" done.
 				echo
