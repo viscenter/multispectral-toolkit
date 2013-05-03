@@ -34,18 +34,23 @@ else
 		echo "Beginning work on $folio"
 				
 		echo "$(date +"%F") :: $(date +"%T")" :: Creating volume...
+			# Make the nrrd volume for the page
 			unu join -a 2 -i png/*_002.png png/*_014.png png/*_003.png png/*_004.png png/*_005.png png/*_006.png png/*_007.png png/*_008.png png/*_009.png png/*_010.png png/*_011.png png/*_012.png png/*_013.png -o $folio.nrrd
 		
 		echo "$(date +"%F") :: $(date +"%T")" :: Applying measures...
-			for l in min max mean median variance skew intc slope error sd product sum L1 L2 Linf; do echo $l; done | parallel --eta -u unu project -a 2 -i $folio.nrrd -o $folio-f-m-{}.nrrd -m {}
+			# Perform different measurements on the nrrd volume
+			# 'product' has been taken out of the list below. I've only had it produce null results and cause errors when quantizing.//SP
+			for l in min max mean median variance skew intc slope error sd sum L1 L2 Linf; do echo $l; done | parallel --eta -u unu project -a 2 -i $folio.nrrd -o $folio-f-m-{}.nrrd -m {}
 		
 		echo "$(date +"%F") :: $(date +"%T")" :: Remapping and quantizing results...
+			# Download the color remapping file. Use curl if wget isn't installed. Important since OSX 10.8 doesn't come with wget
 			if command -v wget >/dev/null; then
 				wget -nv http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt
 			else
 				echo "$(date +"%F") :: $(date +"%T")" :: wget not found. Using curl...
 				curl --progress-bar http://teem.sourceforge.net/nrrd/tutorial/darkhue.txt	
 			fi
+			# Remap each measurement nrrd and output to png, then histogram equalize each nrrd, remap it, and output it to png
 			for m in *-f-m-*.nrrd; do echo $m; done | parallel --eta -u "unu rmap -m darkhue.txt -i {} | unu quantize -b 8 -o {.}-noheq.png; unu heq -b 3000 -a 0.5 -i {} | unu rmap -m darkhue.txt | unu quantize -b 8 -o {.}-heq.png"
 		
 		echo "$(date +"%F") :: $(date +"%T")" :: Cleaning up...

@@ -17,9 +17,6 @@ multispectral-toolkit to-do list
 **Despot**
 
 * Better file organization/clean-up
-* Identify issue with despotting and flatfielding/spectralizing
-* Convert process to OpenCV and compare results
-
 
 **Spectralize**
 

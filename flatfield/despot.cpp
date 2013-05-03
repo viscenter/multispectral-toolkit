@@ -43,9 +43,12 @@ int main( int argc, char *argv[] )
 	
 //	Make mask by thresholding image and growing output		
 	threshold( workingimage, mask, 42000, 65535, 0 );
+	
+	// Fills border on right and bottom edges of image
 	line( mask, px0 , pxy, (maxVal, maxVal, maxVal), 1);
 	line( mask, p0y , pxy, (maxVal, maxVal, maxVal), 1);
-		int erosion_size = 1;   
+	
+	int erosion_size = 1;   
 	Mat element = getStructuringElement( MORPH_ELLIPSE,
     					                 Size(2 * erosion_size + 1, 2 * erosion_size + 1), 
                       					 Point(erosion_size, erosion_size) );
@@ -62,7 +65,6 @@ int main( int argc, char *argv[] )
 
 //	Convert working images back to 16-bit unsigned
 	minMaxLoc(lowdepth, &minVal, &maxVal);
-	
 	lowdepth.convertTo( lowdepth, CV_16U, 65535.0/(maxVal - minVal), -minVal * 65535.0/(maxVal - minVal));
 	mask.convertTo( mask, CV_16U, 65535.0/(maxVal - minVal), -minVal * 65535.0/(maxVal - minVal));
 	invertmask.convertTo( invertmask, CV_16U, 65535.0/(maxVal - minVal), -minVal * 65535.0/(maxVal - minVal));

@@ -153,6 +153,7 @@ required dependencies. First go to [Homebrew's website](http://mxcl.github.com/h
 the install instructions. From there, run the following commands to install all the dependencies.
 
 > \# Install OpenCV, teem, exiv2, GNU parallel  
+> $ brew tap homebrew/science
 > $ brew install opencv teem exiv2 parallel imagemagick --use-tiff  
 > \# Install flatten, pngflatten, despot  
 > $ cd ~/source/multispectral-toolkit/flatfield  
@@ -255,4 +256,25 @@ _NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **[Prere
   
 ### despot.sh ###
   
-COMING SOON
+`despot.sh` attempts to remove spots or blemishes in flatfield images that might cause irregularities when the flatfields are applied 
+to a data set. These spots might be paper pulp or spots caused by an unclean flatfield surface; that is, spots that would be obscured 
+by a manuscript during data acquisition. It should _NOT_ be run on flatfields that have spots between the camera and the manuscript 
+(e.g. dust on the lens), unless the spot was removed between flatfielding and manuscript acquisition.  
+ 
+The script should be run from the flatfields' Processed folder. It takes no arguments.  
+  
+> $ cd ~/MVDaily_20121203/FLATS\_TODAY  
+> $ ~/source/multispectral\-toolkit/despot.sh  
+  
+The `despot` application that is called during this process will attempt to in-paint dark spots on the flatfield image. It was 
+written specifically for use with the "Standard" EurekaVision Workflow, therefore results may vary across workflows. The `despot` 
+application thresholds images to isolate spots from the foreground. This can cause issues with extremely dark flatfields or, in the 
+case of the "Standard" EurekaVision Workflow, completely black images used to separate acquisition attempts. This images should _NOT_ 
+be processed by `despot` and should be removed from the working folder prior to processing.  
+
+One last note, images acquired by the VisCenter multispectral camera have a single-pixel-wide border on the right and bottom edges of 
+of the image. This causes issues during in-painting and `despot` has been written to fill-in these borders before in-painting. Datasets 
+that do not have these borders should be wary of `despot` or should modify `despot.cpp` appropriately.  
+    
+_NOTE: Running `despot.sh` requires that you have previously built the `despot` application. See **[Prerequisites](#prerequisites)**
+for more information._

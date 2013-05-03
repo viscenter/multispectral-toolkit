@@ -2,6 +2,10 @@
 
 # Single Volume Processing for Copywriter
 
+# Check to see if there is a flatfielded, multispectral, rgb, rgb_jpg, or png folder
+# For each tif, jpg, or png (depending on the folder), check the copyright field in the EXIF data
+# If the current copyright doesn't match the new copyright, delete the current copyright and write the new one
+
 if [[ ! -d flatfielded ]]; then
 		echo "$(date +"%F") :: $(date +"%T") :: No flatfielded folder."
 	else

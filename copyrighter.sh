@@ -10,6 +10,7 @@ echo Copyrighter - The Multispectral Copyright Application
 echo -----------------------------------------------------
 echo "             Hit CTRL + C to exit."
 
+# Get copyright information from user
 while true; do
 echo
 read -p "Please enter the copyright holder's name: " copyright_name
@@ -29,6 +30,7 @@ echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_ye
 		esac
 done
 
+# User select folder type
 echo
 echo -----------------------------------------------------
 echo
@@ -52,6 +54,7 @@ echo
 echo -----------------------------------------------------
 echo
 
+# Export appropriate information and call the appropriate processor script
 export copyright_name
 export copyright_year
 
