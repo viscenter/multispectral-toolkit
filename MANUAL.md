@@ -263,13 +263,13 @@ by a manuscript during data acquisition. It should _NOT_ be run on flatfields th
  
 The script should be run from the flatfields' Processed folder. It takes no arguments.  
   
-> $ cd ~/MVDaily_20121203/FLATS\_TODAY  
+> $ cd ~/MVDaily_20121203/FLATS\_TODAY/Processed  
 > $ ~/source/multispectral\-toolkit/despot.sh  
   
 The `despot` application that is called during this process will attempt to in-paint dark spots on the flatfield image. It was 
 written specifically for use with the "Standard" EurekaVision Workflow, therefore results may vary across workflows. The `despot` 
 application thresholds images to isolate spots from the foreground. This can cause issues with extremely dark flatfields or, in the 
-case of the "Standard" EurekaVision Workflow, completely black images used to separate acquisition attempts. This images should _NOT_ 
+case of the "Standard" EurekaVision Workflow, completely black images used to separate acquisition attempts. These images should _NOT_ 
 be processed by `despot` and should be removed from the working folder prior to processing.  
 
 One last note, images acquired by the VisCenter multispectral camera have a single-pixel-wide border on the right and bottom edges of 
