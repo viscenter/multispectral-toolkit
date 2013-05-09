@@ -34,7 +34,7 @@ echo
 
 while true; do
 	read -p "Enter output location (NOTE: Folders can be dropped onto the Terminal window): " output_folder
-	echo $output_folder
+	# echo $output_folder
 	if  [[ -d $output_folder && -w $output_folder ]]; then
 		echo
 		echo "You have selected $output_folder"
@@ -84,7 +84,7 @@ echo "$(date +"%F") :: $(date +"%T") :: Flatfielding Complete"
 
 cd $output_folder
 
-${HOME}/source/multispectral-toolkit/bin/mstk_spectral.sh
+${HOME}/source/multispectral-toolkit/spectralize.sh
 
 echo
 echo "$(date +"%F") :: $(date +"%T") :: Multispectral Rendering Complete"

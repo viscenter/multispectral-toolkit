@@ -212,15 +212,11 @@ for more information._
 ### spectralize.sh ###
   
 `spectralize.sh` takes sets of flatfielded folios and applies various measurements to their data. The
-output is generally referred to as a "multispectral rendering". The script should be run from inside
-the `flatfielded` folder created by `applyflats.sh`. It requires no arguments.
+output is generally referred to as a "multispectral rendering". The script should be run from the output 
+folder created by `applyflats.sh`. It requires no arguments.
   
-> \# This example assumes you did not move the flatfielded folder after running applyflats.sh
-> $ cd ~/MVDaily_20121203/FLATS\_TODAY/flatfielded
+> $ cd ~/output\_folder
 > $ cd ~/source/multispectral\-toolkit/spectralize.sh  
-  
-The output images will be placed inside a folder named `multispectral` in the same directory as the
-`flatfielded` folder.  
   
 It's important that all files are numbered according to the "Standard" EurekaVision Workflow. Misnumbered
 files will cause `spectralize.sh` to crash. See **_[Metadata](#metadata)_** for more information. 
