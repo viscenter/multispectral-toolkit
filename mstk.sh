@@ -52,6 +52,23 @@ done
 setuplog=$(date +"%F")_$(date +"%T")_setup.log
 echo "output_folder   $output_folder" >> $output_folder/$setuplog
 echo >> $output_folder/$setuplog
+echo
+
+## Ask for spectralize.sh output formats
+while true; do
+	read -p "Create JPG output of multispectral measurements? (y/n) " jpg_true
+		case $jpg_true in
+			[YyNn] ) break;;
+			* ) echo "Please answer y or n.";;
+		esac
+done
+while true; do
+	read -p "Create PNG output of multispectral measurements? (y/n) " png_true
+		case $png_true in
+			[YyNn] ) break;;
+			* ) echo "Please answer y or n.";;
+		esac
+done
 
 ## Set Copyright Information
 while true; do
@@ -84,7 +101,7 @@ echo "$(date +"%F") :: $(date +"%T") :: Flatfielding Complete"
 
 cd $output_folder
 
-${HOME}/source/multispectral-toolkit/spectralize.sh
+. ${HOME}/source/multispectral-toolkit/spectralize.sh
 
 echo
 echo "$(date +"%F") :: $(date +"%T") :: Multispectral Rendering Complete"
