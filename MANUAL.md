@@ -155,7 +155,7 @@ the install instructions. From there, run the following commands to install all 
 > \# Install OpenCV, teem, exiv2, GNU parallel  
 > $ brew tap homebrew/science
 > $ brew install opencv teem exiv2 parallel imagemagick --use-tiff  
-> \# Install flatten, pngflatten, despot  
+> \# Install pngflatten, despot  
 > $ cd ~/source/multispectral-toolkit/flatfield  
 > $ make  
   

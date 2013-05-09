@@ -1,23 +1,33 @@
-multispectral-toolkit to-do list
-================================
+multispectral-toolkit v2 to-do list
+===================================
 
 **Toolkit Additions**
+
+* Static OpenCV? Or static pngflatten/despot
 
 
 **Applyflats**
 
-* Carry over metadata from original image - implemented in mstk.sh. Add to applyflats.sh
-* Embed new copyright when applying flats
-* Better file organization - implemented in mstk.sh. Rethink applyflats to make more consistent output.
-
-
+* Embed new copyright when applying flats?
+  
+  
 **Copyrighter**
 
-
+* Customize embedded copyright/presets for copyright types (generic, CC-NC, etc)
+  
+  
 **Despot**
 
 * Better file organization/clean-up
-
+* Detection of blank image
+  
+  
 **Spectralize**
 
-* Better file organization/clean-up - Some changes implemeneted in mstk.sh.
+* Auto-detect captured wavelength
+* output type option (PNG, TIF, JPG)
+
+  
+**All Scripts**
+  
+* Port to Python/Ruby/some sort of OOP lang? - save for v3

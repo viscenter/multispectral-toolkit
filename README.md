@@ -6,24 +6,15 @@ A set of tools for organizing and processing multispectral data.
 
 **Latest Updates**
 
+* 5.9.2013 - Branch for v2.0. Sync spectralize.sh, applyflats.sh with their mstk counterparts. 
 * 1.15.2013 - despot now uses in-painting via OpenCV. Spot isolation needs a lot of work.
 * 12.20.2012 - mstk.sh: Flatfielded images and PNGs are now created using pngflatten. flatten currently being kept for applyflats.sh support.
 * 12.13.2012 - First version of mstk and its subscripts. mstk takes a folder of dailies and outputs a fully processed collection.
-* 12.7.2012 - Added To-Do list. File reorganization in anticipation of future changes.
-* 12.5.2012 - Update to Copyrighter to work with either single volumes or collections of volumes.
-* 12.4.2012 - Added Copyrighter to toolkit. Added some ID UI to all scripts.
-* 12.3.2012 - Initial commit. First versions of despot and spectralize. Subtree merge with csparker247/flatfield. All flatfield development moving to this project.
 
 
 **Installation**
 
-* Open Terminal
-* $ mkdir ~/source  
-$ cd ~/source  
-$ git clone https://github.com/csparker247/multispectral-toolkit.git  
-$ cd ~/source/multispectral-toolkit/flatfield  
-$ make
-* Invoke all scripts from inside the folders you want to process. Check the MANUAL and the header of each script for more information. 
+* Check MANUAL.md for installation instructions  
 
 
 **Known Issues/Special Notes**
