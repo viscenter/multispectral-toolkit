@@ -200,17 +200,13 @@ is usually better to run `copyrighter.sh` in your output folder than to rerun `m
   
 ### applyflats.sh ###
   
-`applyflats.sh` flat-field corrects all folios in a single Daily folder using flatfields provided to the script.
-The script is run from inside the flatfields folio folder. It takes the corresponding Daily folder as its argument.  
+`applyflats.sh` flat-field corrects all folios in all Daily folders using flatfields found in the corresponding Daily folder.
+The script is run from inside the folder containing all of the Daily folders to be processed. It needs no arguments to run, 
+but takes a setup log created by `mstk.sh` as an argument.  
   
-> $ cd ~/MVDaily_20121203/FLATS\_TODAY  
-> $ ~/source/multispectral\-toolkit/applyflats.sh ~/MVDaily\_20121203  
+> $ ~/source/multispectral\-toolkit/applyflats.sh [~/output\_folder/2013\-05\-09\_14/02/37\_setup.log]  
   
-Flatfield, RGB, and RGB JPG outputs are placed in their corresponding folders inside the flatfields folder from
-which the script was run. The internal structure of these folders should remain the same for other scripts, but
-they can be moved elsewhere as needed.  
-
-_NOTE: Running `applyflats.sh` requires that you have previously built the `flatten` application. See **[Prerequisites](#prerequisites)**
+_NOTE: Running `applyflats.sh` requires that you have previously built the `pngflatten` application. See **[Prerequisites](#prerequisites)**
 for more information._
   
 ### spectralize.sh ###

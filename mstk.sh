@@ -77,7 +77,7 @@ echo "copyright_year   $copyright_year" >> $output_folder/$setuplog
 echo >> $output_folder/$setuplog
 
 
-${HOME}/source/multispectral-toolkit/bin/mstk_flats.sh "$output_folder/$setuplog"
+${HOME}/source/multispectral-toolkit/applyflats.sh "$output_folder/$setuplog"
 
 echo
 echo "$(date +"%F") :: $(date +"%T") :: Flatfielding Complete"
