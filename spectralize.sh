@@ -11,19 +11,19 @@ echo -----------------------------------------------
 echo
 
 ## Ask for spectralize.sh output formats
-if [[ -z $png_true ]]; then
+if [[ -z $jpg_true ]]; then
 	while true; do
-		read -p "Create PNG output of multispectral measurements? (y/n) " png_true
-			case $png_true in
+		read -p "Create JPG output of multispectral measurements? (y/n) " jpg_true
+			case $jpg_true in
 				[YyNn] ) break;;
 				* ) echo "Please answer y or n.";;
 			esac
 	done
 fi
-if [[ -z $jpg_true ]]; then
+if [[ -z $png_true ]]; then
 	while true; do
-		read -p "Create JPG output of multispectral measurements? (y/n) " jpg_true
-			case $jpg_true in
+		read -p "Create PNG output of multispectral measurements? (y/n) " png_true
+			case $png_true in
 				[YyNn] ) break;;
 				* ) echo "Please answer y or n.";;
 			esac
@@ -70,8 +70,15 @@ for i in */; do
 				cd $VOLUME/png/$folio/
 				echo		
 				echo "$(date +"%F") :: $(date +"%T")" :: Creating volume...
+					for k in *.png; do
+					WAVELENGTH="$(exiv2 -qpa $k | grep Exif.Photo.SpectralSensitivity | awk '{print $4}' | sed 's/(\([0-9A-Za-z]*\)nm,/\1/')"
+					if [[ "$WAVELENGTH" != "non" ]]; then
+						echo "$WAVELENGTH $k">>sort.txt
+					fi
+					done
 					# Make the nrrd volume for the page
-					unu join -a 2 -i *_002.png *_014.png *_003.png *_004.png *_005.png *_006.png *_007.png *_008.png *_009.png *_010.png *_011.png *_012.png *_013.png -o $VOLUME/nrrd/$folio/$folio.nrrd
+					unu join -a 2 -i $(sort sort.txt | awk '{print $2}') -o $VOLUME/nrrd/$folio/$folio.nrrd
+					rm sort.txt
 				echo
 				echo "$(date +"%F") :: $(date +"%T")" :: Applying measures...
 					# Perform different measurements on the nrrd volume
