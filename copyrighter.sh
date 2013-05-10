@@ -16,6 +16,8 @@ echo
 read -p "Please enter the copyright holder's name: " copyright_name
 read -p "Please enter the copyright year: " copyright_year
 echo
+# Select template from list
+# Preview output
 echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_year. All rights reserved."
 	while true; do
 	read -p "Is this correct? (y/n) " yn
