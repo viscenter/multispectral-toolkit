@@ -11,29 +11,53 @@ echo -----------------------------------------------
 echo
 
 ## Ask for spectralize.sh output formats
-if [[ -z $jpg_true ]]; then
+if [[ -z $flatpng_true ]]; then
 	while true; do
-		read -p "Create JPG output of multispectral measurements? (y/n) " jpg_true
-			case $jpg_true in
+	read -p "Keep PNG output of flatfielded images? (y/n) " flatpng_true
+		case $flatpng_true in
+			[YyNn] ) break;;
+			* ) echo "Please answer y or n.";;
+		esac
+	done
+fi
+if [[ -z $multijpg_true ]]; then
+	while true; do
+		read -p "Create JPG output of multispectral measurements? (y/n) " multijpg_true
+			case $multijpg_true in
 				[YyNn] ) break;;
 				* ) echo "Please answer y or n.";;
 			esac
 	done
 fi
-if [[ -z $png_true ]]; then
+if [[ -z $multipng_true ]]; then
 	while true; do
-		read -p "Create PNG output of multispectral measurements? (y/n) " png_true
-			case $png_true in
+		read -p "Create PNG output of multispectral measurements? (y/n) " multipng_true
+			case $multipng_true in
+				[YyNn] ) break;;
+				* ) echo "Please answer y or n.";;
+			esac
+	done
+fi
+if [[ -z $keepnrrd ]]; then
+	while true; do
+		read -p "Keep nrrd files? (y/n) " keepnrrd
+			case $keepnrrd in
 				[YyNn] ) break;;
 				* ) echo "Please answer y or n.";;
 			esac
 	done
 fi
 
-if [ $png_true == "N" ] || [ $png_true == "n" ]; then
-	if [ $jpg_true == "N" ] || [ $jpg_true == "n" ]; then
+if [ $multipng_true == "N" ] || [ $multipng_true == "n" ]; then
+	if [ $multijpg_true == "N" ] || [ $multijpg_true == "n" ]; then
+		if [ $keepnrrd == "N" ] || [ $keepnrrd == "n" ]; then
+			echo
+			echo "$(date +"%F") :: $(date +"%T") :: WARNING :: No outputs selected. Exiting..."
+			echo
+			exit 1
+		fi
 	echo
-	echo "$(date +"%F") :: $(date +"%T") :: WARNING :: No outputs selected. Only nrrd's will be created."
+	echo "$(date +"%F") :: $(date +"%T") :: WARNING :: No image outputs selected. Only nrrd's will be created."
 	echo
 	fi
 fi
@@ -57,9 +81,15 @@ for i in */; do
 				echo
 				echo "$(date +"%F") :: $(date +"%T") :: Beginning work on $folio"
 				
-					if [ $png_true == "Y" ] || [ $png_true == "y" ] || [ $jpg_true == "Y" ] || [ $jpg_true == "y" ]; then
+					if [ $multipng_true == "Y" ] || [ $multipng_true == "y" ]; then
 						if [[ ! -d $VOLUME/multispectral/$folio ]]; then
 							mkdir -p $VOLUME/multispectral/$folio
+						fi
+					fi
+					
+					if [ $multijpg_true == "Y" ] || [ $multijpg_true == "y" ]; then
+						if [[ ! -d $VOLUME/multispectral_jpg/$folio ]]; then
+							mkdir -p $VOLUME/multispectral_jpg/$folio
 						fi
 					fi
 					
@@ -86,7 +116,7 @@ for i in */; do
 					for l in min max mean median variance skew intc slope error sd sum L1 L2 Linf; do echo $l; done | parallel --eta -u unu project -a 2 -i $VOLUME/nrrd/$folio/$folio.nrrd -o $VOLUME/nrrd/$folio/$folio-f-m-{}.nrrd -m {}
 				echo
 				
-				if [ $png_true == "Y" ] || [ $png_true == "y" ] || [ $jpg_true == "Y" ] || [ $jpg_true == "y" ]; then
+				if [ $multipng_true == "Y" ] || [ $multipng_true == "y" ] || [ $multijpg_true == "Y" ] || [ $multijpg_true == "y" ]; then
 				echo "$(date +"%F") :: $(date +"%T")" :: Remapping and quantizing results...
 					# Download the color remapping file. Use curl if wget isn't installed. Important since OSX 10.8 doesn't come with wget
 					if [ ! -f $VOLUME/nrrd/darkhue.txt ]; then
@@ -102,13 +132,13 @@ for i in */; do
 					
 						for m in $VOLUME/nrrd/$folio/*-f-m-*.nrrd; do
 							STRIPPEDM=$(basename $m | sed 's/\(.*\)\..*/\1/')
-							if [ $png_true == "Y" ] || [ $png_true == "y" ]; then
+							if [ $multipng_true == "Y" ] || [ $multipng_true == "y" ]; then
 								QUANTIZECOMMANDS+="unu rmap -m $VOLUME/nrrd/darkhue.txt -i $m | unu quantize -b 8 -o $VOLUME/multispectral/$folio/$STRIPPEDM-noheq.png\n"
 								QUANTIZECOMMANDS+="unu heq -b 3000 -a 0.5 -i $m | unu rmap -m $VOLUME/nrrd/darkhue.txt | unu quantize -b 8 -o $VOLUME/multispectral/$folio/$STRIPPEDM-heq.png\n"
 							fi
-							if [ $jpg_true == "Y" ] || [ $jpg_true == "y" ]; then	
-								QUANTIZECOMMANDS+="unu rmap -m $VOLUME/nrrd/darkhue.txt -i $m | unu quantize -b 8 -o $VOLUME/multispectral/$folio/$STRIPPEDM-noheq.ppm && cjpeg -q 100 -outfile $VOLUME/multispectral/$folio/$STRIPPEDM-noheq.jpg $VOLUME/multispectral/$folio/$STRIPPEDM-noheq.ppm && rm -f $VOLUME/multispectral/$folio/$STRIPPEDM-noheq.ppm\n"
-								QUANTIZECOMMANDS+="unu heq -b 3000 -a 0.5 -i $m | unu rmap -m $VOLUME/nrrd/darkhue.txt | unu quantize -b 8 -o $VOLUME/multispectral/$folio/$STRIPPEDM-heq.ppm && cjpeg -q 100 -outfile $VOLUME/multispectral/$folio/$STRIPPEDM-heq.jpg $VOLUME/multispectral/$folio/$STRIPPEDM-heq.ppm && rm -f $VOLUME/multispectral/$folio/$STRIPPEDM-heq.ppm\n"
+							if [ $multijpg_true == "Y" ] || [ $multijpg_true == "y" ]; then	
+								QUANTIZECOMMANDS+="unu rmap -m $VOLUME/nrrd/darkhue.txt -i $m | unu quantize -b 8 -o $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-noheq.ppm && cjpeg -q 100 -outfile $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-noheq.jpg $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-noheq.ppm && rm -f $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-noheq.ppm\n"
+								QUANTIZECOMMANDS+="unu heq -b 3000 -a 0.5 -i $m | unu rmap -m $VOLUME/nrrd/darkhue.txt | unu quantize -b 8 -o $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-heq.ppm && cjpeg -q 100 -outfile $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-heq.jpg $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-heq.ppm && rm -f $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-heq.ppm\n"
 							fi
 						done
 					# echo $QUANTIZECOMMANDS > $PWD/commands.txt
@@ -124,5 +154,17 @@ for i in */; do
 		
 		cd $VOLUME/png
 		done
+	# Remove nrrd's if we don't want them
+		if [ $keepnrrd == "N" ] || [ $keepnrrd == "n" ]; then
+			rm -rf $VOLUME/nrrd
+		fi
+	# Remove rgb folder if we don't want it...	
+		if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
+			rm -rf $VOLUME/rgb
+		fi
+	# Remove rgb folder if we don't want it...	
+		if [[ "$flatpng_true" == "N" || "$flatpng_true" == "n" ]]; then
+			rm -rf $VOLUME/png
+		fi
 	cd $ROOT
 done

@@ -179,7 +179,7 @@ results. It is also meant to simplify post-processing such that a minimally trai
 processing of data sets.  
 
 `mstk.sh` should be run from inside the folder containing all of the Daily folders to be processed. It needs no
-arguments to run.  
+arguments to run, though it accepts `--minimal`, `--standard`, or `--mega` as preset flags.  
   
 > $ ~/source/multispectral-toolkit/mstk.sh  
   

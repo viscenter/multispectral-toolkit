@@ -14,7 +14,7 @@ echo "folder structure in mind. It should be run from the"
 echo "folder containing a project's daily folders. Each"
 echo "daily folder should contain a flatfields folder that"
 echo "is date-stamped (e.g. FLATS_[YYYYMMDD]). For more info,"
-echo "reference the HELP file."
+echo "reference the MANUAL file."
 echo
 echo "Many of this application's tasks should be non-destructive"
 echo "in that the original folder structure and files will"
@@ -29,6 +29,38 @@ echo
 
 
 # Initial Variable Setup
+# Get runtime options
+if [[ $1 == "--minimal" ]]; then
+	echo "Minimal output mode selected."
+	echo
+	flatjpg_true="y"
+	flattif_true="n"
+	flatpng_true="n"
+	rgbtif_true="n"
+	multijpg_true="y"
+	multipng_true="n"
+	keepnrrd="n"
+elif [[ $1 == "--standard" ]]; then
+	echo "Standard output mode selected."
+	echo
+	flatjpg_true="n"
+	flattif_true="y"
+	flatpng_true="n"
+	rgbtif_true="y"
+	multijpg_true="n"
+	multipng_true="y"
+	keepnrrd="y"
+elif [[ $1 == "--mega" ]]; then
+	echo "Mega output mode selected."
+	echo
+	flatjpg_true="y"
+	flattif_true="y"
+	flatpng_true="y"
+	rgbtif_true="y"
+	multijpg_true="y"
+	multipng_true="y"
+	keepnrrd="y"
+fi
 
 ## Set Output Folder
 
@@ -54,21 +86,72 @@ echo "output_folder   $output_folder" >> $output_folder/$setuplog
 echo >> $output_folder/$setuplog
 echo
 
+## Ask for applyflats.sh output formats
+if [[ -z $flatjpg_true ]]; then
+	while true; do
+		read -p "Create JPG output of flatfielded images? (y/n) " flatjpg_true
+			case $flatjpg_true in
+				[YyNn] ) break;;
+				* ) echo "Please answer y or n.";;
+			esac
+	done
+fi
+if [[ -z $flattif_true ]]; then
+	while true; do
+		read -p "Keep TIF output of flatfielded images? (y/n) " flattif_true
+			case $flattif_true in
+				[YyNn] ) break;;
+				* ) echo "Please answer y or n.";;
+			esac
+	done
+fi
+if [[ -z $flatpng_true ]]; then
+	while true; do
+	read -p "Keep PNG output of flatfielded images? (y/n) " flatpng_true
+		case $flatpng_true in
+			[YyNn] ) break;;
+			* ) echo "Please answer y or n.";;
+		esac
+	done
+fi
+if [[ -z $rgbtif_true ]]; then
+	while true; do
+		read -p "Keep TIF output of RGB images? (y/n) " rgbtif_true
+			case $rgbtif_true in
+				[YyNn] ) break;;
+				* ) echo "Please answer y or n.";;
+			esac
+	done
+fi
+
 ## Ask for spectralize.sh output formats
-while true; do
-	read -p "Create JPG output of multispectral measurements? (y/n) " jpg_true
-		case $jpg_true in
-			[YyNn] ) break;;
-			* ) echo "Please answer y or n.";;
-		esac
-done
-while true; do
-	read -p "Create PNG output of multispectral measurements? (y/n) " png_true
-		case $png_true in
-			[YyNn] ) break;;
-			* ) echo "Please answer y or n.";;
-		esac
-done
+if [[ -z $multijpg_true ]]; then
+	while true; do
+		read -p "Create JPG output of multispectral measurements? (y/n) " multijpg_true
+			case $multijpg_true in
+				[YyNn] ) break;;
+				* ) echo "Please answer y or n.";;
+			esac
+	done
+fi
+if [[ -z $multipng_true ]]; then
+	while true; do
+		read -p "Create PNG output of multispectral measurements? (y/n) " multipng_true
+			case $multipng_true in
+				[YyNn] ) break;;
+				* ) echo "Please answer y or n.";;
+			esac
+	done
+fi
+if [[ -z $keepnrrd ]]; then
+	while true; do
+		read -p "Keep nrrd files? (y/n) " keepnrrd
+			case $keepnrrd in
+				[YyNn] ) break;;
+				* ) echo "Please answer y or n.";;
+			esac
+	done
+fi
 
 ## Set Copyright Information
 while true; do
@@ -94,7 +177,7 @@ echo "copyright_year   $copyright_year" >> $output_folder/$setuplog
 echo >> $output_folder/$setuplog
 
 
-${HOME}/source/multispectral-toolkit/applyflats.sh "$output_folder/$setuplog"
+${HOME}/source/multispectral-toolkit/applyflats.sh "$output_folder/$setuplog" "$flatjpg_true" "$flattif_true" "$rgbtif_true"
 
 echo
 echo "$(date +"%F") :: $(date +"%T") :: Flatfielding Complete"

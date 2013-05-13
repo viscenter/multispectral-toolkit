@@ -6,6 +6,9 @@ A set of tools for organizing and processing multispectral data.
 
 **Latest Updates**
 
+* 5.13.2013 - Add preset flags to mstk.sh. applyflats.sh and spectralize.sh now lets user select output types that are kept after processing.
+* 5.11.2013 - First working version of summarize.sh, preprocessing report application.
+* 5.10.2013 - spectralize.sh autodetects wavelength order of files.
 * 5.9.2013 - Branch for v2.0. Sync spectralize.sh, applyflats.sh with their mstk counterparts. 
 * 1.15.2013 - despot now uses in-painting via OpenCV. Spot isolation needs a lot of work.
 * 12.20.2012 - mstk.sh: Flatfielded images and PNGs are now created using pngflatten. flatten currently being kept for applyflats.sh support.
