@@ -230,7 +230,7 @@ output is generally referred to as a "multispectral rendering". The script shoul
 folder created by `applyflats.sh`. It requires no arguments.
   
 > $ cd ~/output\_folder
-> $ cd ~/source/multispectral\-toolkit/spectralize.sh  
+> $ ~/source/multispectral\-toolkit/spectralize.sh  
   
 It's important that all files are numbered according to the "Standard" EurekaVision Workflow. Misnumbered
 files will cause `spectralize.sh` to crash. See **_[Metadata](#metadata)_** for more information. 
@@ -239,26 +239,16 @@ _NOTE: `spectralize.sh` requires ImageMagick, teem, and GNU parallel. See **[Pre
   
 ### copyrighter.sh ###
   
-`copyrighter.sh` adds user-defined copyright information to the EXIF tags of an image set. The type of data you are processing
-changes where it should be executed. If you are processing a single volume, you should run it from the folder that contains 
-the `flatfielded`, `multispectral`, `png`, `rgb`, and `rgb_jpg` folders. If you are processing a collection of volumes, you
-should run it from the folder that contains the set of volume subdirectories.  
+`copyrighter.sh` adds user-defined copyright information to the EXIF tags of an image set. It can be run from any folder containing 
+JPGs, PNGs, and TIFs in any folder structure. As part of mstk.sh, it is run from the output folder.  
 
-> \# Single Volume, created by running applyflats.sh and spectralize.sh  
-> \# This example assumes you did not move the output folders after running applyflats.sh and spectralize.sh  
-> $ cd ~/MVDaily_20121203/FLATS\_TODAY/  
-> $ cd ~/source/multispectral\-toolkit/copyrighter.sh  
-> \# Enter Option 1\) Single Volume when prompted  
-   
-> \# Collection of Volumes, created by running mstk.sh  
-> $ cd ~/COLLECTIONS/  
-> $ cd ~/source/multispectral\-toolkit/copyrighter.sh  
-> \# Enter Option 2\) Collection of Volumes when prompted  
+> $ cd ~/output\_folder
+> $ ~/source/multispectral\-toolkit/copyrighter.sh  
 
-Upon running, the script will prompt you for the copyright holder's name and the year of the copyright.
-This information will be written to the images' EXIF tags in the format "Copyright [NAME], [YEAR]. All rights reserved."
+Upon running, the script will prompt you for the copyright holder's name, the year of the copyright, and a copyright template.
+This information will be written to the images' EXIF tags in the format specified by the template.  
 
-_NOTE: `copyright.sh` requires ImageMagick, teem, and GNU parallel. See **[Prerequisites](#prerequisites)** for more information._  
+_NOTE: `copyright.sh` requires exiv2. See **[Prerequisites](#prerequisites)** for more information._  
   
 ### despot.sh ###
   
