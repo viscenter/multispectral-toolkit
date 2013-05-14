@@ -99,12 +99,13 @@ for i in */; do
 		
 		# For everything in the shoot folder
 		for j in $(basename $i)/*; do
-		  # Get volume name
+		  # Get volume name		  
 		  vol_name=$(basename "$j" | sed 's/\(.*\)-[0-9]*/\1/')
 		  page_name=$(basename "$j")
 		  		  
 		  # Check to make sure it's a page's directory and not a random file
 		  if [[ -d "$j" ]]; then
+			if [[ $(basename $j) != FLATS_* ]]; then
 			# Print name to stderr and clear out RGB arrays
 			export RED=""
 			export GREEN=""
@@ -230,6 +231,9 @@ for i in */; do
 			else
 			  echo "Skipping $j, no processed directory" 1>&2
 			fi
+			else
+				echo "Skipping $j, is a flatfields directory" 1>&2
+			fi
 		  else
 			echo "Skipping $j, not a directory" 1>&2
 		  fi
@@ -245,7 +249,7 @@ done
 #echo "EXV_COMMANDS" >> $setuplog
 #echo $EXV_COMMANDS >> $setuplog
 #echo >> $setuplog
-echo $CLEANUP_COMMANDS >>$setuplog
+#echo $CLEANUP_COMMANDS >>$setuplog
 #echo
 
 # Run all accumulated commands at once
@@ -274,5 +278,12 @@ echo $RGB_JPG_COMMANDS | parallel --eta -u -j 8
 echo
 echo "$(date +"%F") :: $(date +"%T") :: Cleaning up..." 1>&2
 echo $CLEANUP_COMMANDS | parallel -eta -u -j 8
-
+# Remove rgb folder if we don't want it...	
+	if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
+		for i in $output_folder/*; do
+			if [[ -d "$i" ]]; then
+				rm -rf $i/rgb
+			fi
+		done
+	fi
 exit

@@ -158,11 +158,7 @@ for i in */; do
 		if [ $keepnrrd == "N" ] || [ $keepnrrd == "n" ]; then
 			rm -rf $VOLUME/nrrd
 		fi
-	# Remove rgb folder if we don't want it...	
-		if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
-			rm -rf $VOLUME/rgb
-		fi
-	# Remove rgb folder if we don't want it...	
+	# Remove png folder if we don't want it...	
 		if [[ "$flatpng_true" == "N" || "$flatpng_true" == "n" ]]; then
 			rm -rf $VOLUME/png
 		fi
