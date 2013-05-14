@@ -159,7 +159,19 @@ echo
 read -p "Please enter the copyright holder's name: " copyright_name
 read -p "Please enter the copyright year: " copyright_year
 echo
-echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_year. All rights reserved."
+echo "Select a copyright template:"
+echo "    1) Copyright, $copyright_name, $copyright_year. All rights reserved."
+while true; do
+	read -p "Make a selection: " preset
+		case $preset in
+			[1] ) 
+				fullcopyright="Copyright, $copyright_name, $copyright_year. All rights reserved.";
+				break;;
+			* ) echo "Please select from the list.";;
+		esac
+	done
+
+echo "Your copyright will be saved as: $fullcopyright"
 	while true; do
 	read -p "Is this correct? (y/n) " yn
 		case $yn in
@@ -167,16 +179,13 @@ echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_ye
 			* ) echo "Please answer y or n.";;
 		esac
 	done
-		case $yn in
-			[Yy]* ) break;;
-			[Nn]* ) continue;;
-		esac
+case $yn in
+	[Yy]* ) break;;
+	[Nn]* ) continue;;
+esac
 done
-echo "copyright_name   $copyright_name" >> $output_folder/$setuplog
-echo "copyright_year   $copyright_year" >> $output_folder/$setuplog
-echo >> $output_folder/$setuplog
 
-
+# Start Processing
 ${HOME}/source/multispectral-toolkit/applyflats.sh "$output_folder/$setuplog" "$flatjpg_true" "$flattif_true" "$rgbtif_true"
 
 echo
@@ -191,16 +200,7 @@ echo "$(date +"%F") :: $(date +"%T") :: Multispectral Rendering Complete"
 
 cd $output_folder
 
-echo
-echo -----------------------------------------------------
-echo Copyrighter - The Multispectral Copyright Application
-echo -----------------------------------------------------
-echo
-
-export copyright_name
-export copyright_year
-
-${HOME}/source/multispectral-toolkit/bin/cpwrtr_collection.sh
+. ${HOME}/source/multispectral-toolkit/copyrighter.sh
 
 echo
 echo ----------------------

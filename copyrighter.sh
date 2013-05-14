@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Add copyright information to image files.
-# Adds metadata to flatfielded, multispectral, png, rgb, and rgb_jpg folders.
-# Run on folder containing output from applyflats.sh.
+# Run on folder containing output from mstk.sh or applyflats.sh.
+
 
 echo
 echo -----------------------------------------------------
@@ -10,15 +10,26 @@ echo Copyrighter - The Multispectral Copyright Application
 echo -----------------------------------------------------
 echo "             Hit CTRL + C to exit."
 
+if [[ -z $fullcopyright ]]; then
 # Get copyright information from user
 while true; do
 echo
 read -p "Please enter the copyright holder's name: " copyright_name
 read -p "Please enter the copyright year: " copyright_year
 echo
-# Select template from list
-# Preview output
-echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_year. All rights reserved."
+echo "Select a copyright template:"
+echo "    1) Copyright, $copyright_name, $copyright_year. All rights reserved."
+while true; do
+	read -p "Make a selection: " preset
+		case $preset in
+			[1] ) 
+				fullcopyright="Copyright, $copyright_name, $copyright_year. All rights reserved.";
+				break;;
+			* ) echo "Please select from the list.";;
+		esac
+	done
+
+echo "Your copyright will be saved as: $fullcopyright"
 	while true; do
 	read -p "Is this correct? (y/n) " yn
 		case $yn in
@@ -26,44 +37,20 @@ echo "Your copyright will be saved as: Copyright, $copyright_name, $copyright_ye
 			* ) echo "Please answer y or n.";;
 		esac
 	done
-		case $yn in
-			[Yy]* ) break;;
-			[Nn]* ) continue;;
-		esac
+case $yn in
+	[Yy]* ) break;;
+	[Nn]* ) continue;;
+esac
 done
-
-# User select folder type
-echo
-echo -----------------------------------------------------
-echo
-echo "Current working folder is `PWD`"
-echo
-echo "Is this folder a single volume or a collection of volumes?"
-echo "NOTE: A volume represents a single book, with subfolders for each of its pages."
-echo
-PS3="Enter option number:"
-	select SET in "Single Volume" "Collection of Volumes"; do
-	  case $SET in
-			"Single Volume" ) echo "Working on single volume."
-				type="1"
-			  	break;;
-			"Collection of Volumes" ) echo "Working on collection of volumes."
-			  	type="2"
-			  	break;;
-	  esac
-	done
-echo
-echo -----------------------------------------------------
-echo
-
-# Export appropriate information and call the appropriate processor script
-export copyright_name
-export copyright_year
-
-if [ $type = "1" ]; then
-	${HOME}/source/multispectral-toolkit/bin/cpwrtr_single.sh
 fi
 
-if [ $type = "2" ]; then
-	${HOME}/source/multispectral-toolkit/bin/cpwrtr_collection.sh
-fi
+
+for file in $(find $PWD -type f \( -name "*.png" -or -name "*.jpg" -or -name "*.tif" \)); do
+		CURRENTCOPY=$(exiv2 -g Exif.Image.Copyright -Pt $file)
+		if [[ $CURRENTCOPY != "$fullcopyright" ]]; then
+			printf "\r																																	 "
+			printf "\r$(date +"%F") :: $(date +"%T") :: Writing copyright metadata to $(basename "$file")..."
+			exiv2 -M"del Exif.Image.Copyright" -M"set Exif.Image.Copyright Ascii $fullcopyright" $file
+		fi
+done
+echo
