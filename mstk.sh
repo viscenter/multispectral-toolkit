@@ -160,12 +160,16 @@ read -p "Please enter the copyright holder's name: " copyright_name
 read -p "Please enter the copyright year: " copyright_year
 echo
 echo "Select a copyright template:"
-echo "    1) Copyright, $copyright_name, $copyright_year. All rights reserved."
+echo "    1) © $copyright_name, $copyright_year. All rights reserved."
+echo "    2) © $copyright_name"
 while true; do
 	read -p "Make a selection: " preset
 		case $preset in
 			[1] ) 
-				fullcopyright="Copyright, $copyright_name, $copyright_year. All rights reserved.";
+				fullcopyright="© $copyright_name, $copyright_year. All rights reserved.";
+				break;;
+			[2] ) 
+				fullcopyright="© $copyright_name";
 				break;;
 			* ) echo "Please select from the list.";;
 		esac
