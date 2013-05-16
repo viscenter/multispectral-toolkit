@@ -24,7 +24,10 @@ int main( int argc, char *argv[] )
 		
 	GaussianBlur( flat_img, flat_img, cv::Size(3,3), 0, 0, BORDER_REPLICATE );
 	divide( image, flat_img, image, image.depth() == 0 ? UCHAR_MAX : USHRT_MAX );
-	imwrite( out_file, image );
+	vector<int> compression_params;
+    compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+    compression_params.push_back(9);
+	imwrite( out_file, image, compression_params );
 	
   return 0;
 }

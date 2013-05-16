@@ -178,7 +178,7 @@ for i in */; do
 					# Build a flatten command and add it to the an array of flatfields commands
 					FLATFIELD=$wavelengths[$WAVELENGTH]
 					NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
-					FLATFIELDJPG_COMMANDS+="$move_command $OUTFILE_TIF $NOEXT_JPGOUT.tif && cp $NOEXT_FLAT.exv $NOEXT_JPGOUT.exv && convert -quiet -quality 100 $NOEXT_JPGOUT.tif $OUTFILE_JPG && rm $NOEXT_JPGOUT.tif && exiv2 -ia $NOEXT_JPGOUT.jpg && rm $NOEXT_JPGOUT.exv\n"
+					FLATFIELDJPG_COMMANDS+="$move_command $OUTFILE_TIF $NOEXT_JPGOUT.tif && cp $NOEXT_FLAT.exv $NOEXT_JPGOUT.exv && convert -quiet -quality 97 $NOEXT_JPGOUT.tif $OUTFILE_JPG && rm $NOEXT_JPGOUT.tif && exiv2 -ia $NOEXT_JPGOUT.jpg && rm $NOEXT_JPGOUT.exv\n"
 				  else
 					echo "Skipping $k, no wavelength match in flatfields" 1>&2
 				  fi
@@ -217,7 +217,7 @@ for i in */; do
 				RGB_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
 				fi
 				if [[ ! -e $output_folder/$vol_name/rgb_jpg/$page_name.jpg ]]; then
-				RGB_JPG_COMMANDS+="convert -quiet -quality 100 $output_folder/$vol_name/rgb/$page_name.tif $output_folder/$vol_name/rgb_jpg/$page_name.jpg\n"
+				RGB_JPG_COMMANDS+="convert -quiet -quality 97 $output_folder/$vol_name/rgb/$page_name.tif $output_folder/$vol_name/rgb_jpg/$page_name.jpg\n"
 				fi
 				# If we're not keeping the RGB TIFs
 				if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
