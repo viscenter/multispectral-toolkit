@@ -30,9 +30,11 @@ echo "---------------------------">>$report
 echo >>$report
 all_vol_names=()
 vol_exists=""
+ROOT=$PWD
 # For each daily folder
 for i in */; do
 	echo "Daily folder: $(basename $i)">>$report
+	multi_flats=""
 	flat_exists=""
 	# Check each subitem, if it's a folder...
 	for j in $(basename $i)/*; do
@@ -42,7 +44,8 @@ for i in */; do
 			  echo "     Flatfield folder found: $j">>$report
 			  # If already found a flatfield, call a warning
 			  if [[ $flat_exists == "true" ]]; then
-			  	echo "     WARNING: Multiple flatfield folders detected for $(basename $i)!">>$report 
+			  	multi_flats="true"
+			  	flatserror="y"
 			  fi
 			  # If first flatfield found, collect multispectral info
 			  if [[ $flat_exists != "true" ]]; then
@@ -87,7 +90,62 @@ for i in */; do
 	if [[ "$flat_exists" != "true" ]]; then
 		echo "     WARNING: Flatfield folder not detected for $(basename $i)!">>$report
 	fi
-	echo >>$report
+	# If we found multiple flats in this daily folder...
+	if [[ "$multi_flats" == "true" ]]; then
+		echo "     WARNING: Multiple flatfield folders detected for $(basename $i)!">>$report 
+		# For each flatfield folder, create a variable: flatfield_wavelength=exposure time
+		for j in $(basename $i)/FLATS_*; do
+			mainfolder=$(basename $j)
+				for k in ${j}/Processed/*.tif; do
+					wavelength=$(exiv2 -g Exif.Photo.SpectralSensitivity -qPt $k | awk '{print $1}' | sed 's/(\([0-9A-Za-z]*\)nm,/\1/')
+						if [[ "$wavelength" == "non" ]]; then wavelength="000"; fi
+					exposure=$(exiv2 -g Exif.Photo.SpectralSensitivity -qPt $k | awk '{print $2}' | sed 's/\([0-9]*.[0-9]*\)s,/\1/')
+					eval "${mainfolder}_${wavelength}=$exposure"
+				done
+		done
+		
+		# For each page folder in this daily folder...
+		for page in ${i}*-[0-9]*; do
+			echo "        $(basename $page) matches exposure data for:" >>$report
+			# Iterate through all the flats folders again...
+			for k in $(basename $i)/FLATS_*; do
+				# Matches the flatfield by default
+				matches="y"
+				flatname=$(basename $k)
+				# Get the exposure information for each image in the page folder
+				for image in ${j}/Processed/*.tif; do
+					imageinfo=$(exiv2 -g Exif.Photo.SpectralSensitivity -qPt $image)
+					wavelength=$(echo $imageinfo | awk '{print $1}' | sed 's/(\([0-9A-Za-z]*\)nm,/\1/')
+						if [[ "$wavelength" == "non" ]]; then wavelength="000"; fi
+					exposure=$(echo $imageinfo | awk '{print $2}' | sed 's/\([0-9]*.[0-9]*\)s,/\1/')
+					
+					# Substitution magic
+					FLATTEMP="\${${flatname}_$wavelength}"
+					FLATTEMP=`eval echo $FLATTEMP`
+			
+					#echo "$(basename $image): $exposure"
+					#echo "	${flatname}_${wavelength}: $FLATTEMP"
+					
+					# If we earlier found this wavelength in the currently checked flatfield folder...
+					if [[ $FLATTEMP ]]; then
+							# Compare the exposure times of that flatfield file and the current file we're on
+							# If they don't match, then that flatfield folder doesn't match this page
+							if [[ "$exposure" != "$FLATTEMP" ]]; then
+								matches="n"
+							fi
+					# If there isn't a corresponding wavelength in the flatfield folder, then this page doesn't match
+					else
+						matches="n"
+					fi
+				done
+				# If, after all of that, this page still matches the flatfield, then report it
+				if [[ "$matches" == "y" ]]; then
+					echo "          ${flatname}" >>$report
+				fi
+			done	
+		done
+	fi
+echo >>$report
 done
 
 # List the folios and corresponding pages discovered in the previous process
@@ -103,6 +161,15 @@ echo "     Volume Name: $i">>$report
     echo "          $LIST">>$report
 echo >>$report
 done
+
+# Multiple flatfields folders causes issues with the rest of the script. Error out if we found multiple flatfields in any daily folder.
+if [[ $flatserror == "y" ]]; then
+	echo "     WARNING: Multiple flatfields detected in a daily folder! Resolve before continuing." 1>&2
+	echo "     Please see $report for more details." 1>&2
+	echo 1>&2
+	exit 1
+fi
+
 
 echo >>$report
 echo "-----------------------------">>$report
