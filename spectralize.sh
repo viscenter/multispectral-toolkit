@@ -10,6 +10,7 @@ echo Spectralize - Render Multispectral Measurements
 echo -----------------------------------------------
 echo
 
+
 ## Ask for spectralize.sh output formats
 if [[ -z $flatpng_true ]]; then
 	while true; do
@@ -60,6 +61,10 @@ if [ $multipng_true == "N" ] || [ $multipng_true == "n" ]; then
 	echo "$(date +"%F") :: $(date +"%T") :: WARNING :: No image outputs selected. Only nrrd's will be created."
 	echo
 	fi
+fi
+
+if [[ -z $measures ]]; then
+	measures="min max mean median variance skew intc slope error sd sum L1 L2 Linf"
 fi
 
 ROOT="$PWD"
@@ -113,7 +118,7 @@ for i in */; do
 				echo "$(date +"%F") :: $(date +"%T")" :: Applying measures...
 					# Perform different measurements on the nrrd volume
 					# 'product' has been taken out of the list below. I've only had it produce null results and cause errors when quantizing.//SP
-					for l in min max mean median variance skew intc slope error sd sum L1 L2 Linf; do echo $l; done | parallel --eta -u unu project -a 2 -i $VOLUME/nrrd/$folio/$folio.nrrd -o $VOLUME/nrrd/$folio/$folio-f-m-{}.nrrd -m {}
+					for l in $measures; do echo $l; done | parallel --eta -u unu project -a 2 -i $VOLUME/nrrd/$folio/$folio.nrrd -o $VOLUME/nrrd/$folio/$folio-f-m-{}.nrrd -m {}
 				echo
 				
 				if [ $multipng_true == "Y" ] || [ $multipng_true == "y" ] || [ $multijpg_true == "Y" ] || [ $multijpg_true == "y" ]; then

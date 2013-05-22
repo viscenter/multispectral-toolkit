@@ -27,7 +27,6 @@ echo
 echo -------------------------------------------------------
 echo
 
-
 # Initial Variable Setup
 # Get runtime options
 if [[ $1 == "--minimal" ]]; then
@@ -60,6 +59,11 @@ elif [[ $1 == "--mega" ]]; then
 	multijpg_true="y"
 	multipng_true="y"
 	keepnrrd="y"
+elif [[ $1 == "--google" ]]; then
+	echo "Google CI output mode selected."
+	echo
+	flatjpg_true="y"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"
+	multijpg_true="y"; multipng_true="n"; keepnrrd="n"; measures="variance"
 fi
 
 ## Set Output Folder
