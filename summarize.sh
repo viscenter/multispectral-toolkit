@@ -56,7 +56,8 @@ for i in */; do
 			  flat_exists="true"
 		  else
 			  # Get volume name
-			  vol_name=$(basename "$j" | sed 's/\(.*\)-[0-9]*/\1/')
+			  j=$(basename $j)
+			  vol_name=${j%-*}
 			  page_name=${j#*-}
 			  
 			  # Check master volumes array to see if we've seen this volume before
@@ -105,7 +106,7 @@ for i in */; do
 		done
 		
 		# For each page folder in this daily folder...
-		for page in ${i}*-[0-9]*; do
+		for page in ${i}*-[0-9A-Za-z]*; do
 			echo "        $(basename $page) matches exposure data for:" >>$report
 			# Iterate through all the flats folders again...
 			for k in $(basename $i)/FLATS_*; do

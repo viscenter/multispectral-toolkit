@@ -100,7 +100,7 @@ for i in */; do
 		# For everything in the shoot folder
 		for j in $(basename $i)/*; do
 		  # Get volume name		  
-		  vol_name=$(basename "$j" | sed 's/\(.*\)-[0-9]*/\1/')
+		  vol_name=$(basename "$j" | sed 's/\(.*\)-[0-9A-Za-z]*/\1/')
 		  page_name=$(basename "$j")
 		  		  
 		  # Check to make sure it's a page's directory and not a random file
