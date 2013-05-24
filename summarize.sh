@@ -98,10 +98,12 @@ for i in */; do
 		for j in $(basename $i)/FLATS_*; do
 			mainfolder=$(basename $j)
 				for k in ${j}/Processed/*.tif; do
+					if [[ -f $k ]]; then
 					wavelength=$(exiv2 -g Exif.Photo.SpectralSensitivity -qPt $k | awk '{print $1}' | sed 's/(\([0-9A-Za-z]*\)nm,/\1/')
 						if [[ "$wavelength" == "non" ]]; then wavelength="000"; fi
 					exposure=$(exiv2 -g Exif.Photo.SpectralSensitivity -qPt $k | awk '{print $2}' | sed 's/\([0-9]*.[0-9]*\)s,/\1/')
 					eval "${mainfolder}_${wavelength}=$exposure"
+					fi
 				done
 		done
 		
@@ -114,7 +116,7 @@ for i in */; do
 				matches="y"
 				flatname=$(basename $k)
 				# Get the exposure information for each image in the page folder
-				for image in ${j}/Processed/*.tif; do
+				for image in ${page}/Processed/*.tif; do
 					imageinfo=$(exiv2 -g Exif.Photo.SpectralSensitivity -qPt $image)
 					wavelength=$(echo $imageinfo | awk '{print $1}' | sed 's/(\([0-9A-Za-z]*\)nm,/\1/')
 						if [[ "$wavelength" == "non" ]]; then wavelength="000"; fi
