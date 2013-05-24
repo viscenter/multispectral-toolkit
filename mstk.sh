@@ -63,7 +63,7 @@ elif [[ $1 == "--google" ]]; then
 	echo "Google CI output mode selected."
 	echo
 	flatjpg_true="y"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"
-	multijpg_true="y"; multipng_true="n"; keepnrrd="n"; measures="variance"
+	multijpg_true="y"; multipng_true="n"; keepnrrd="n"; noheq="n"; measures="skew intc sd"
 fi
 
 ## Set Output Folder

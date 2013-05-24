@@ -138,11 +138,15 @@ for i in */; do
 						for m in $VOLUME/nrrd/$folio/*-f-m-*.nrrd; do
 							STRIPPEDM=$(basename $m | sed 's/\(.*\)\..*/\1/')
 							if [ $multipng_true == "Y" ] || [ $multipng_true == "y" ]; then
+								if [[ $noheq != "n" ]]; then
 								QUANTIZECOMMANDS+="unu rmap -m $VOLUME/nrrd/darkhue.txt -i $m | unu quantize -b 8 -o $VOLUME/multispectral/$folio/$STRIPPEDM-noheq.png\n"
+								fi
 								QUANTIZECOMMANDS+="unu heq -b 3000 -a 0.5 -i $m | unu rmap -m $VOLUME/nrrd/darkhue.txt | unu quantize -b 8 -o $VOLUME/multispectral/$folio/$STRIPPEDM-heq.png\n"
 							fi
 							if [ $multijpg_true == "Y" ] || [ $multijpg_true == "y" ]; then	
+								if [[ $noheq != "n" ]]; then
 								QUANTIZECOMMANDS+="unu rmap -m $VOLUME/nrrd/darkhue.txt -i $m | unu quantize -b 8 -o $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-noheq.ppm && cjpeg -q 95 -outfile $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-noheq.jpg $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-noheq.ppm && rm -f $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-noheq.ppm\n"
+								fi
 								QUANTIZECOMMANDS+="unu heq -b 3000 -a 0.5 -i $m | unu rmap -m $VOLUME/nrrd/darkhue.txt | unu quantize -b 8 -o $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-heq.ppm && cjpeg -q 95 -outfile $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-heq.jpg $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-heq.ppm && rm -f $VOLUME/multispectral_jpg/$folio/$STRIPPEDM-heq.ppm\n"
 							fi
 						done
