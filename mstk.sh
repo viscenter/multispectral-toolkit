@@ -32,33 +32,18 @@ echo
 if [[ $1 == "--minimal" ]]; then
 	echo "Minimal output mode selected."
 	echo
-	flatjpg_true="y"
-	flattif_true="n"
-	flatpng_true="n"
-	rgbtif_true="n"
-	multijpg_true="y"
-	multipng_true="n"
-	keepnrrd="n"
+	flatjpg_true="y"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"
+	multijpg_true="y"; multipng_true="n"; keepnrrd="n"; noheq="n"
 elif [[ $1 == "--standard" ]]; then
 	echo "Standard output mode selected."
 	echo
-	flatjpg_true="n"
-	flattif_true="y"
-	flatpng_true="n"
-	rgbtif_true="y"
-	multijpg_true="n"
-	multipng_true="y"
-	keepnrrd="y"
+	flatjpg_true="n"; flattif_true="y"; flatpng_true="n"; rgbtif_true="y"
+	multijpg_true="n"; multipng_true="y"; keepnrrd="y"
 elif [[ $1 == "--mega" ]]; then
 	echo "Mega output mode selected."
 	echo
-	flatjpg_true="y"
-	flattif_true="y"
-	flatpng_true="y"
-	rgbtif_true="y"
-	multijpg_true="y"
-	multipng_true="y"
-	keepnrrd="y"
+	flatjpg_true="y"; flattif_true="y"; flatpng_true="y"; rgbtif_true="y"
+	multijpg_true="y"; multipng_true="y"; keepnrrd="y"
 elif [[ $1 == "--google" ]]; then
 	echo "Google CI output mode selected."
 	echo
