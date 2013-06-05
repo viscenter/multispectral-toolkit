@@ -49,12 +49,14 @@ done
 fi
 
 
-for file in $(find $PWD -type f \( -name "*.png" -or -name "*.jpg" -or -name "*.tif" \)); do
-		CURRENTCOPY=$(exiv2 -g Exif.Image.Copyright -Pt $file)
+# Build List
+
+for file in $(find "$PWD" -type f \( -name "*.png" -or -name "*.jpg" -or -name "*.tif" \)); do
+		CURRENTCOPY=$(exiv2 -g Exif.Image.Copyright -Pt "$file")
 		if [[ $CURRENTCOPY != "$fullcopyright" ]]; then
 			printf "\r																																	 "
 			printf "\r$(date +"%F") :: $(date +"%T") :: Writing copyright metadata to $(basename "$file")..."
-			exiv2 -M"del Exif.Image.Copyright" -M"set Exif.Image.Copyright Ascii $fullcopyright" $file
+			exiv2 -M"del Exif.Image.Copyright" -M"set Exif.Image.Copyright Ascii $fullcopyright" "$file"
 		fi
 done
 echo

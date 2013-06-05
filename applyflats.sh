@@ -89,7 +89,7 @@ for i in */; do
 		# Setup for applying flatfields to appropriate exposures for each page
 		# Checks wavelength of each flatfields image and send to array in format: wavelengths[638nm]="638nm"
 		for j in $currentflat/Processed/*.tif; do
-		  WAVELENGTH=$(exiv2 -qpa $j | grep Exif.Photo.SpectralSensitivity|awk '{print substr($0, index($0,$4))}')
+		  WAVELENGTH=$(exiv2 -g Exif.Photo.SpectralSensitivity -qPt $j | awk '{print $1}' | sed 's/(\([0-9A-Za-z]*\)nm,/\1/')
 		  wavelengths[$WAVELENGTH]=$j
 		  if [ ! -f $(echo $j | sed 's/\(.*\)\..*/\1/').exv ]; then
 		  	EXV_COMMANDS+="exiv2 -qea $j\n"
@@ -114,27 +114,28 @@ for i in */; do
 			# Check for a Processed folder for the page
 			if [[ -d "$j"/Processed ]]; then
 			  # In the flatfields folder, make a new folder for flatfield processed images, then a new folder for the page being processed
-			  mkdir -p $output_folder/$vol_name/flatfielded/$page_name
-			  mkdir -p $output_folder/$vol_name/png/$page_name
+			  mkdir -p "$output_folder/$vol_name/flatfielded/$page_name"
+			  mkdir -p "$output_folder/$vol_name/png/$page_name"
 			  # For every tif inside the page's processed folder...
 			  for k in "$j"/Processed/*.tif; do
 				# Set flatfielded image filepath to new flatfielded folder
 				OUTFILE_TIF="$output_folder/$vol_name/flatfielded/$page_name/$(basename $k)"
 				OUTFILE_JPG="$output_folder/$vol_name/flatfielded_jpg/$page_name/$(basename $k | sed 's/\(.*\)\..*/\1/').jpg"
 				OUTFILE_PNG="$output_folder/$vol_name/png/$page_name/$(basename $k | sed 's/\(.*\)\..*/\1/').png"
-				NOEXT_TIFOUT=$(echo $OUTFILE_TIF | sed 's/\(.*\)\..*/\1/')
-				NOEXT_JPGOUT=$(echo $OUTFILE_JPG | sed 's/\(.*\)\..*/\1/')
-				NOEXT_PNGOUT=$(echo $OUTFILE_PNG | sed 's/\(.*\)\..*/\1/')
+				NOEXT_TIFOUT=$(echo "$OUTFILE_TIF" | sed 's/\(.*\)\..*/\1/')
+				NOEXT_JPGOUT=$(echo "$OUTFILE_JPG" | sed 's/\(.*\)\..*/\1/')
+				NOEXT_PNGOUT=$(echo "$OUTFILE_PNG" | sed 's/\(.*\)\..*/\1/')
 				
 				# Gets wavelength of file
-				WAVELENGTH=$(exiv2 -qpa $k | grep Exif.Photo.SpectralSensitivity|awk '{print substr($0, index($0,$4))}')
+				WAVELENGTH=$(exiv2 -g Exif.Photo.SpectralSensitivity -qPt "$k" | awk '{print $1}' | sed 's/(\([0-9A-Za-z]*\)nm,/\1/')
+
 				
 				# If it finds an RGB wavelength, stores file path for processing
-				if [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "638nm" ]]; then
+				if [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "638" ]]; then
 				  export RED=$OUTFILE_TIF
-				elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "535nm" ]]; then
+				elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "535" ]]; then
 				  export GREEN=$OUTFILE_TIF
-				elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "465nm" ]]; then
+				elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "465" ]]; then
 				  export BLUE=$OUTFILE_TIF
 				else
 				  # echo "$WAVELENGTH not a primary color" 1>&2
@@ -145,7 +146,7 @@ for i in */; do
 				  # And if the flatfields folder has a matching wavelength...
 				  if [[ -n $wavelengths[$WAVELENGTH] ]]; then
 					# If we want to keep TIFs...
-					if [ $flattif_true == "Y" ] || [ $flattif_true == "y" ] || [ "$WAVELENGTH" =~ "638nm" ] || [ "$WAVELENGTH" =~ "535nm" ] || [ "$WAVELENGTH" =~ "465nm" ]; then
+					if [ $flattif_true == "Y" ] || [ $flattif_true == "y" ] || [ "$WAVELENGTH" =~ "638" ] || [ "$WAVELENGTH" =~ "535" ] || [ "$WAVELENGTH" =~ "465" ]; then
 					# Build a flatten command with exiv2 transfers and add it to the an array of flatfields commands
 					FLATFIELD=$wavelengths[$WAVELENGTH]
 					NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
@@ -157,7 +158,7 @@ for i in */; do
 					FLATFIELDTIF_COMMANDS+="~/source/multispectral-toolkit/flatfield/pngflatten $FLATFIELD $k $OUTFILE_TIF\n"
 					fi
 				  else
-					echo "Skipping $k, no wavelength match in flatfields" 1>&2
+					echo "Skipping TIF output for $k, no wavelength match in flatfields" 1>&2
 				  fi
 				else
 				  echo "Skipping $k, $OUTFILE_TIF already exists" 1>&2
@@ -166,7 +167,7 @@ for i in */; do
 				# If we want to make JPGs and flatfielded JPG output doesn't already exist...
 				if [ $flatjpg_true == "Y" ] || [ $flatjpg_true == "y" ]; then
 					# If we're keeping the TIFs, copy them to the JPG directory. Otherwise, move them.
-					if [ $flattif_true == "Y" ] || [ $flattif_true == "y" ] || [ "$WAVELENGTH" =~ "638nm" ] || [ "$WAVELENGTH" =~ "535nm" ] || [ "$WAVELENGTH" =~ "465nm" ]; then
+					if [ $flattif_true == "Y" ] || [ $flattif_true == "y" ] || [ "$WAVELENGTH" =~ "638" ] || [ "$WAVELENGTH" =~ "535" ] || [ "$WAVELENGTH" =~ "465" ]; then
 						move_command="cp"
 					else
 						move_command="mv"
@@ -180,7 +181,7 @@ for i in */; do
 					NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
 					FLATFIELDJPG_COMMANDS+="$move_command $OUTFILE_TIF $NOEXT_JPGOUT.tif && cp $NOEXT_FLAT.exv $NOEXT_JPGOUT.exv && convert -quiet -quality 97 $NOEXT_JPGOUT.tif $OUTFILE_JPG && rm $NOEXT_JPGOUT.tif && exiv2 -ia $NOEXT_JPGOUT.jpg && rm $NOEXT_JPGOUT.exv\n"
 				  else
-					echo "Skipping $k, no wavelength match in flatfields" 1>&2
+					echo "Skipping JPG output for $k, no wavelength match in flatfields" 1>&2
 				  fi
 				else
 				  echo "Skipping $k, $OUTFILE_JPG already exists" 1>&2
@@ -196,7 +197,7 @@ for i in */; do
 					NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
 					FLATFIELDPNG_COMMANDS+="~/source/multispectral-toolkit/flatfield/pngflatten $FLATFIELD $k $OUTFILE_PNG && cp $NOEXT_FLAT.exv $NOEXT_PNGOUT.exv && exiv2 -ia $NOEXT_PNGOUT.png && rm $NOEXT_PNGOUT.exv\n"
 				  else
-					echo "Skipping $k, no wavelength match in flatfields" 1>&2
+					echo "Skipping PNG output for $k, no wavelength match in flatfields" 1>&2
 				  fi
 				else
 				  echo "Skipping $k, $OUTFILE_PNG already exists" 1>&2
