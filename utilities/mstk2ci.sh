@@ -36,7 +36,7 @@ for i in */; do
 					mkdir -p ${output_folder}/MSIntercept
 				fi
 				
-				outfile=$(echo "$sourcefile" | sed 's/\(.*\)-\([0-9]*\)-f-m-intc-heq\.jpg/\1-MSIntercept-\2\.jpg/')
+				outfile=$(echo "$sourcefile" | sed 's/\(.*\)-\([0-9A-Za-z]*\)-f-m-intc-heq\.jpg/\1-MSIntercept-\2\.jpg/')
 				outpath=${output_folder}/MSIntercept/$outfile
 				
 				cp $sourcepath $outpath
@@ -48,7 +48,7 @@ for i in */; do
 					mkdir -p ${output_folder}/MSStdDev
 				fi
 				
-				outfile=$(echo "$sourcefile" | sed 's/\(.*\)-\([0-9]*\)-f-m-sd-heq\.jpg/\1-MSStdDev-\2\.jpg/')
+				outfile=$(echo "$sourcefile" | sed 's/\(.*\)-\([0-9A-Za-z]*\)-f-m-sd-heq\.jpg/\1-MSStdDev-\2\.jpg/')
 				outpath=${output_folder}/MSStdDev/$outfile
 				
 				cp $sourcepath $outpath
@@ -60,7 +60,7 @@ for i in */; do
 					mkdir -p ${output_folder}/MSSkew
 				fi
 				
-				outfile=$(echo "$sourcefile" | sed 's/\(.*\)-\([0-9]*\)-f-m-skew-heq\.jpg/\1-MSSkew-\2\.jpg/')
+				outfile=$(echo "$sourcefile" | sed 's/\(.*\)-\([0-9A-Za-z]*\)-f-m-skew-heq\.jpg/\1-MSSkew-\2\.jpg/')
 				outpath=${output_folder}/MSSkew/$outfile
 				
 				cp $sourcepath $outpath
