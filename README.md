@@ -6,6 +6,7 @@ A set of tools for organizing and processing multispectral data.
 
 **Latest Updates**
 
+* 6.20.2013 - Changes to enable multispectral-only output. Updated documentation to reflect changes since v2.0.
 * 5.17.2013 - summarize.sh now tries to match pages to their flatfield when multiple flatfields are detected.
 * 5.16.2013 - Version 2.0 release to master.
 * 5.14.2013 - applyflats.sh ignores flatfield folders. copyrighter.sh ignores folder structure, has preset copyright options

@@ -160,7 +160,7 @@ Since the toolkit is primarily developed on OSX, we use Homebrew to install and 
 required dependencies. First go to [Homebrew's website](http://mxcl.github.com/homebrew/) and follow
 the install instructions. From there, run the following commands to install all the dependencies.
 
-> \# Install required software
+> \# Install required software  
 > $ brew tap homebrew/science  
 > $ brew install opencv teem exiv2 parallel ufraw imagemagick --with-libtiff  
 > \# Install pngflatten, despot  
