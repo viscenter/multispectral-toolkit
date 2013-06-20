@@ -32,23 +32,28 @@ echo
 if [[ $1 == "--minimal" ]]; then
 	echo "Minimal output mode selected."
 	echo
-	flatjpg_true="y"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"
+	flatjpg_true="y"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"; rgbjpg_true="y"
 	multijpg_true="y"; multipng_true="n"; keepnrrd="n"; noheq="n"
 elif [[ $1 == "--standard" ]]; then
 	echo "Standard output mode selected."
 	echo
-	flatjpg_true="n"; flattif_true="y"; flatpng_true="n"; rgbtif_true="y"
-	multijpg_true="n"; multipng_true="y"; keepnrrd="y"
+	flatjpg_true="n"; flattif_true="y"; flatpng_true="n"; rgbtif_true="y"; rgbjpg_true="n"
+	multijpg_true="n"; multipng_true="y"; keepnrrd="y"; noheq="n"
 elif [[ $1 == "--mega" ]]; then
 	echo "Mega output mode selected."
 	echo
-	flatjpg_true="y"; flattif_true="y"; flatpng_true="y"; rgbtif_true="y"
-	multijpg_true="y"; multipng_true="y"; keepnrrd="y"
+	flatjpg_true="y"; flattif_true="y"; flatpng_true="y"; rgbtif_true="y"; rgbjpg_true="y"
+	multijpg_true="y"; multipng_true="y"; keepnrrd="y"; noheq="y"
 elif [[ $1 == "--google" ]]; then
 	echo "Google CI output mode selected."
 	echo
-	flatjpg_true="y"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"
+	flatjpg_true="y"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"; rgbjpg_true="y"
 	multijpg_true="y"; multipng_true="n"; keepnrrd="n"; noheq="n"; measures="skew intc sd"
+elif [[ $1 == "--multijpg" ]]; then
+	echo "Multispectral JPEG output mode selected."
+	echo
+	flatjpg_true="n"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"; rgbjpg_true="n"
+	multijpg_true="y"; multipng_true="n"; keepnrrd="n"; noheq="n"
 fi
 
 ## Set Output Folder
@@ -87,7 +92,7 @@ if [[ -z $flatjpg_true ]]; then
 fi
 if [[ -z $flattif_true ]]; then
 	while true; do
-		read -p "Keep TIF output of flatfielded images? (y/n) " flattif_true
+		read -p "Create TIF output of flatfielded images? (y/n) " flattif_true
 			case $flattif_true in
 				[YyNn] ) break;;
 				* ) echo "Please answer y or n.";;
@@ -105,14 +110,22 @@ if [[ -z $flatpng_true ]]; then
 fi
 if [[ -z $rgbtif_true ]]; then
 	while true; do
-		read -p "Keep TIF output of RGB images? (y/n) " rgbtif_true
+		read -p "Create TIF output of RGB images? (y/n) " rgbtif_true
 			case $rgbtif_true in
 				[YyNn] ) break;;
 				* ) echo "Please answer y or n.";;
 			esac
 	done
 fi
-
+if [[ -z $rgbjpg_true ]]; then
+	while true; do
+		read -p "Create JPG output of RGB images? (y/n) " rgbjpg_true
+			case $rgbjpg_true in
+				[YyNn] ) break;;
+				* ) echo "Please answer y or n.";;
+			esac
+	done
+fi
 ## Ask for spectralize.sh output formats
 if [[ -z $multijpg_true ]]; then
 	while true; do
@@ -179,7 +192,7 @@ esac
 done
 
 # Start Processing
-${HOME}/source/multispectral-toolkit/applyflats.sh "$output_folder/$setuplog" "$flatjpg_true" "$flattif_true" "$rgbtif_true"
+${HOME}/source/multispectral-toolkit/applyflats.sh "$output_folder/$setuplog" "$flatjpg_true" "$flattif_true" "$rgbtif_true" "$rgbjpg_true"
 
 echo
 echo "$(date +"%F") :: $(date +"%T") :: Flatfielding Complete"

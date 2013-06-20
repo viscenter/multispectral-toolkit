@@ -35,15 +35,16 @@ if [ $# -eq 0 ]; then
 	echo "output_folder   $output_folder" >> $setuplog
 	echo >> $setuplog
 else
-	## Import variables from setup log
+	## Import variables from arguments
 	output_folder=$(cat "$1" | grep output_folder | awk '{ print $2 }')
 	flatjpg_true="$2"
 	flattif_true="$3"
 	rgbtif_true="$4"
+	rgbjpg_true="$5"
 	setuplog="$1"
 fi
 
-if [[ -z "$flatjpg_true" || -z "$flattif_true" || -z "$rgbtif_true" ]]; then
+if [[ -z "$flatjpg_true" || -z "$flattif_true" || -z "$rgbtif_true" || -z "$rgbjpg_true" ]]; then
 	echo
 	## Ask for applyflats.sh output formats
 	while true; do
@@ -54,15 +55,22 @@ if [[ -z "$flatjpg_true" || -z "$flattif_true" || -z "$rgbtif_true" ]]; then
 			esac
 	done
 	while true; do
-		read "flattif_true?Keep TIF output of flatfielded images? (y/n) "
+		read "flattif_true?Create TIF output of flatfielded images? (y/n) "
 			case $flattif_true in
 				[YyNn] ) break;;
 				* ) echo "Please answer y or n.";;
 			esac
 	done
 	while true; do
-		read "rgbtif_true?Keep TIF output of RGB images? (y/n) "
+		read "rgbtif_true?Create TIF output of RGB images? (y/n) "
 			case $rgbtif_true in
+				[YyNn] ) break;;
+				* ) echo "Please answer y or n.";;
+			esac
+	done
+	while true; do
+		read "rgbjpg_true?Create JPG output of RGB images? (y/n) "
+			case $rgbjpg_true in
 				[YyNn] ) break;;
 				* ) echo "Please answer y or n.";;
 			esac
@@ -114,7 +122,9 @@ for i in */; do
 			# Check for a Processed folder for the page
 			if [[ -d "$j"/Processed ]]; then
 			  # In the flatfields folder, make a new folder for flatfield processed images, then a new folder for the page being processed
+			  if [ $flattif_true == "Y" ] || [ $flattif_true == "y" ] || [ $flatjpg_true == "Y" ] || [ $flatjpg_true == "y" ] || [ $rgbtif_true == "Y" ] || [ $rgbtif_true == "y" ] || [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
 			  mkdir -p "$output_folder/$vol_name/flatfielded/$page_name"
+			  fi
 			  mkdir -p "$output_folder/$vol_name/png/$page_name"
 			  # For every tif inside the page's processed folder...
 			  for k in "$j"/Processed/*.tif; do
@@ -131,14 +141,16 @@ for i in */; do
 
 				
 				# If it finds an RGB wavelength, stores file path for processing
-				if [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "638" ]]; then
-				  export RED=$OUTFILE_TIF
-				elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "535" ]]; then
-				  export GREEN=$OUTFILE_TIF
-				elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "465" ]]; then
-				  export BLUE=$OUTFILE_TIF
-				else
-				  # echo "$WAVELENGTH not a primary color" 1>&2
+				if [ $rgbtif_true == "Y" ] || [ $rgbtif_true == "y" ] || [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
+					if [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "638" ]]; then
+					  export RED=$OUTFILE_TIF
+					elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "535" ]]; then
+					  export GREEN=$OUTFILE_TIF
+					elif [[ -n $WAVELENGTH && "$WAVELENGTH" =~ "465" ]]; then
+					  export BLUE=$OUTFILE_TIF
+					else
+					  # echo "$WAVELENGTH not a primary color" 1>&2
+					fi
 				fi
 		
 				# If we want to make TIFs or RGB TIFs and flatfielded TIF output doesn't already exist...
@@ -146,16 +158,23 @@ for i in */; do
 				  # And if the flatfields folder has a matching wavelength...
 				  if [[ -n $wavelengths[$WAVELENGTH] ]]; then
 					# If we want to keep TIFs...
-					if [ $flattif_true == "Y" ] || [ $flattif_true == "y" ] || [ "$WAVELENGTH" =~ "638" ] || [ "$WAVELENGTH" =~ "535" ] || [ "$WAVELENGTH" =~ "465" ]; then
+					if [ $flattif_true == "Y" ] || [ $flattif_true == "y" ]; then
 					# Build a flatten command with exiv2 transfers and add it to the an array of flatfields commands
 					FLATFIELD=$wavelengths[$WAVELENGTH]
 					NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
 					FLATFIELDTIF_COMMANDS+="~/source/multispectral-toolkit/flatfield/pngflatten $FLATFIELD $k $OUTFILE_TIF && cp $NOEXT_FLAT.exv $NOEXT_TIFOUT.exv && exiv2 -ia $NOEXT_TIFOUT.tif && rm $NOEXT_TIFOUT.exv\n"
-					else
-					# Build a flatten command without exiv2 transfers and add it to the an array of flatfields commands
-					FLATFIELD=$wavelengths[$WAVELENGTH]
-					NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
-					FLATFIELDTIF_COMMANDS+="~/source/multispectral-toolkit/flatfield/pngflatten $FLATFIELD $k $OUTFILE_TIF\n"
+					elif [ "$WAVELENGTH" =~ "638" ] || [ "$WAVELENGTH" =~ "535" ] || [ "$WAVELENGTH" =~ "465" ]; then
+						if [ $rgbtif_true == "Y" ] || [ $rgbtif_true == "y" ] || [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
+							# Build a flatten command with exiv2 transfers and add it to the an array of flatfields commands
+							FLATFIELD=$wavelengths[$WAVELENGTH]
+							NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
+							FLATFIELDTIF_COMMANDS+="~/source/multispectral-toolkit/flatfield/pngflatten $FLATFIELD $k $OUTFILE_TIF && cp $NOEXT_FLAT.exv $NOEXT_TIFOUT.exv && exiv2 -ia $NOEXT_TIFOUT.tif && rm $NOEXT_TIFOUT.exv\n"
+						fi
+					elif [ $flatjpg_true == "Y" ] || [ $flatjpg_true == "y" ]; then
+						# Build a flatten command without exiv2 transfers and add it to the an array of flatfields commands
+						FLATFIELD=$wavelengths[$WAVELENGTH]
+						NOEXT_FLAT=$(echo $FLATFIELD | sed 's/\(.*\)\..*/\1/')
+						FLATFIELDTIF_COMMANDS+="~/source/multispectral-toolkit/flatfield/pngflatten $FLATFIELD $k $OUTFILE_TIF\n"
 					fi
 				  else
 					echo "Skipping TIF output for $k, no wavelength match in flatfields" 1>&2
@@ -210,23 +229,24 @@ for i in */; do
 			  fi
 			  
 			  # If we found R,G, & B pictures...
-			  if [[ -n $RED && -n $GREEN && -n $BLUE ]]; then
-				mkdir -p $output_folder/$vol_name/rgb
-				mkdir -p $output_folder/$vol_name/rgb_jpg
-				if [[ ! -e $output_folder/$vol_name/rgb/$page_name.tif ]]; then 
-				echo "Performing RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" >> $setuplog
-				RGB_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
-				fi
-				if [[ ! -e $output_folder/$vol_name/rgb_jpg/$page_name.jpg ]]; then
-				RGB_JPG_COMMANDS+="convert -quiet -quality 97 $output_folder/$vol_name/rgb/$page_name.tif $output_folder/$vol_name/rgb_jpg/$page_name.jpg\n"
-				fi
-				# If we're not keeping the RGB TIFs
-				if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
-					CLEANUP_COMMANDS+="rm $output_folder/$vol_name/rgb/$page_name.tif\n"
-				fi
-			  
-			  else
-				echo "Skipping RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" 1>&2
+			  if [ $rgbtif_true == "Y" ] || [ $rgbtif_true == "y" ] || [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
+				  if [[ -n $RED && -n $GREEN && -n $BLUE ]]; then
+					mkdir -p $output_folder/$vol_name/rgb
+					mkdir -p $output_folder/$vol_name/rgb_jpg
+					if [[ ! -e $output_folder/$vol_name/rgb/$page_name.tif ]]; then 
+					echo "Performing RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" >> $setuplog
+					RGB_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
+					fi
+					if [[ ! -e $output_folder/$vol_name/rgb_jpg/$page_name.jpg ]]; then
+					RGB_JPG_COMMANDS+="convert -quiet -quality 97 $output_folder/$vol_name/rgb/$page_name.tif $output_folder/$vol_name/rgb_jpg/$page_name.jpg\n"
+					fi
+					# If we're not keeping the RGB TIFs
+					if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
+						CLEANUP_COMMANDS+="rm $output_folder/$vol_name/rgb/$page_name.tif\n"
+				  	fi
+				  else
+					echo "Skipping RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" 1>&2
+				  fi
 			  fi
 		
 			else
@@ -258,10 +278,11 @@ echo
 echo "$(date +"%F") :: $(date +"%T") :: Extracting metadata..." 1>&2
 echo $EXV_COMMANDS | parallel -eta -u -j 8
 echo
+if [ $flattif_true == "Y" ] || [ $flattif_true == "y" ] || [ $flatjpg_true == "Y" ] || [ $flatjpg_true == "y" ] || [ $rgbtif_true == "Y" ] || [ $rgbtif_true == "y" ] || [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
 echo "$(date +"%F") :: $(date +"%T") :: Flatfielding TIFs..." 1>&2
 echo $FLATFIELDTIF_COMMANDS | parallel --eta -u -j 8
 echo
-
+fi
 if [ $flatjpg_true == "Y" ] || [ $flatjpg_true == "y" ]; then
 echo "$(date +"%F") :: $(date +"%T") :: Flatfielding JPGs..." 1>&2
 echo $FLATFIELDJPG_COMMANDS | parallel --eta -u -j 8
