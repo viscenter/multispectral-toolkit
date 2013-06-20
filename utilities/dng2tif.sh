@@ -1,5 +1,6 @@
 #!/bin/sh
 # Uses ufraw to convert DNGs to TIFs
+# Run from Mega folder
 
 #cp ~/source/multispectral-toolkit/utilities/dng2tif.ufraw $PWD/dng2tif.ufraw
 

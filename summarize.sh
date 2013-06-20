@@ -125,7 +125,8 @@ for i in */; do
 					# Substitution magic
 					FLATTEMP="\${${flatname}_$wavelength}"
 					FLATTEMP=`eval echo $FLATTEMP`
-			
+					
+					# Check variables to ensure accuracy
 					#echo "$(basename $image): $exposure"
 					#echo "	${flatname}_${wavelength}: $FLATTEMP"
 					

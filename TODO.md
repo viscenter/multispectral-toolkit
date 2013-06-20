@@ -24,8 +24,6 @@ multispectral-toolkit v2 to-do list
   
 **Spectralize**
 
-* Auto-detect captured wavelength
-* output type option (PNG, TIF, JPG)
 
   
 **All Scripts**

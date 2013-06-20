@@ -1,5 +1,6 @@
 #!/bin/sh
 # From mstk to Google CI
+# Copies and renames multispectral measurement JPGs specific to Google CI upload process
 # Run from output folder created by mstk.sh
 
 echo
