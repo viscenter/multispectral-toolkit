@@ -6,6 +6,10 @@
 
 config=~/source/multispectral-toolkit/utilities/dng2tif.ufraw
 
+if [ ! -d "../Processed" ]; then
+	mkdir "../Processed"
+fi
+
 ufraw-batch --conf=$config --grayscale=mixer --out-type=tif --out-depth=16 --out-path=../Processed/ $(echo *.dng)
 
 for i in *.dng; do

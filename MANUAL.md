@@ -334,7 +334,7 @@ for more information._
 Used to convert images in a folio's Mega folder to TIFs in the corresponding Processed folder. Converts format and maintains appropriate 
 metadata for multispectral processing. Run from inside a folio's Mega folder.  
   
-_NOTE: `copyright.sh` requires exiv2. See **[Prerequisites](#prerequisites)** for more information._  
+_NOTE: `dng2tif.sh` requires exiv2 and ufraw. See **[Prerequisites](#prerequisites)** for more information._  
   
   
 ### mstk2ci.sh ###
