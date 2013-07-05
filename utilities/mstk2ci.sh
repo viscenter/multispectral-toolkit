@@ -25,7 +25,8 @@ while true; do
 	fi
 done
 echo
-echo "Copying..."
+COPY_COMMANDS=""
+echo "$(date +"%F") :: $(date +"%T") :: Scanning directory structure..." 1>&2
 for i in */; do
 	if [ -d "$(basename $i)"/multispectral_jpg ]; then
 		for sourcepath in $(find "$(basename $i)"/multispectral_jpg -type f -name "*.jpg"); do
@@ -40,7 +41,7 @@ for i in */; do
 				outfile=$(echo "$sourcefile" | sed 's/\(.*\)-\([0-9A-Za-z]*\)-f-m-intc-heq\.jpg/\1-MSIntercept-\2\.jpg/')
 				outpath=${output_folder}/MSIntercept/$outfile
 				
-				cp $sourcepath $outpath
+				COPY_COMMANDS+="cp $sourcepath $outpath\n"
 			fi
 			
 			#Standard Deviation
@@ -52,7 +53,7 @@ for i in */; do
 				outfile=$(echo "$sourcefile" | sed 's/\(.*\)-\([0-9A-Za-z]*\)-f-m-sd-heq\.jpg/\1-MSStdDev-\2\.jpg/')
 				outpath=${output_folder}/MSStdDev/$outfile
 				
-				cp $sourcepath $outpath
+				COPY_COMMANDS+="cp $sourcepath $outpath\n"
 			fi
 			
 			#Skew
@@ -64,11 +65,30 @@ for i in */; do
 				outfile=$(echo "$sourcefile" | sed 's/\(.*\)-\([0-9A-Za-z]*\)-f-m-skew-heq\.jpg/\1-MSSkew-\2\.jpg/')
 				outpath=${output_folder}/MSSkew/$outfile
 				
-				cp $sourcepath $outpath
+				COPY_COMMANDS+="cp $sourcepath $outpath\n"
 			fi			
 		done
 	fi
+	if [ -d "$(basename $i)"/rgb_jpg ]; then
+		for sourcepath in $(find "$(basename $i)"/rgb_jpg -type f -name "*.jpg"); do
+			sourcefile=$(basename $sourcepath)
+			
+			#RGB
+				if [[ ! -d ${output_folder}/RGB ]]; then
+					mkdir -p ${output_folder}/RGB
+				fi
+				
+				outfile=$(echo "$sourcefile" | sed 's/\([0-9A-Za-z]*\)-\([0-9A-Za-z]*\)\.jpg/\1-RGB-\2\.jpg/')
+				outpath=${output_folder}/RGB/$outfile
+				
+				COPY_COMMANDS+="cp $sourcepath $outpath\n"
+		done
+	fi
 done
+# Run all accumulated commands at once
+echo
+echo "$(date +"%F") :: $(date +"%T") :: Copying all files..." 1>&2
+echo $COPY_COMMANDS | parallel -eta -u -j 8
 echo
 echo ----------------------
 echo "  ALL WORK COMPLETE"

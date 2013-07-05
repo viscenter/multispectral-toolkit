@@ -47,7 +47,7 @@ elif [[ $1 == "--mega" ]]; then
 elif [[ $1 == "--google" ]]; then
 	echo "Google CI output mode selected."
 	echo
-	flatjpg_true="y"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"; rgbjpg_true="y"
+	flatjpg_true="n"; flattif_true="n"; flatpng_true="n"; rgbtif_true="n"; rgbjpg_true="y"
 	multijpg_true="y"; multipng_true="n"; keepnrrd="n"; noheq="n"; measures="skew intc sd"
 elif [[ $1 == "--multijpg" ]]; then
 	echo "Multispectral JPEG output mode selected."
