@@ -16,6 +16,13 @@ containsElement () {
   return 1
 }
 
+# Get runtime options
+if [[ $1 == "--standardtest" ]]; then
+	echo "Standard workflow checks enabled."
+	echo
+	standard="y"
+fi
+
 # Generate report name and setup report
 report="Summarize Report - $(date +"%F")_$(date +"%T").txt"
 
@@ -206,12 +213,14 @@ echo "          $LIST">>$report
 		echo "          ${test_array[@]}">>$report
 		echo >>$report
 		# Compare the array against the "Standard" wavelengths
+		if [[ $standard == "y" ]]; then
 		for k in ${MASTER[@]}; do
 			containsElement "$k" "${test_array[@]}"
 			if [[ $? == "1" ]]; then
 				echo "     WARNING: $(basename $j) in daily folder $(basename $i) is missing Standard Eureka Vision exposure ${k}nm">>$report
 			fi
 		done
+		fi
 		# Compare the array against the discovered flatfield exposures to see if we're missing an exposure that was in the flatfields
 		for k in $LIST; do
 			containsElement "$k" "${test_array[@]}"
