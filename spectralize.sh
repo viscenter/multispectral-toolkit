@@ -154,6 +154,10 @@ for i in */; do
 					# Run the quantize/remapping commands for each page
 					echo $QUANTIZECOMMANDS | parallel --eta -u -j 8
 					QUANTIZECOMMANDS=""
+					# Remove intermediate nrrd's if we don't want to keep them. Saves space during processing.
+					if [ $keepnrrd == "N" ] || [ $keepnrrd == "n" ]; then
+						rm -rf $VOLUME/nrrd/$folio
+					fi
 				fi
 				echo	
 				echo "$(date +"%F") :: $(date +"%T")" :: "$folio" done.
@@ -163,7 +167,7 @@ for i in */; do
 		
 		cd $VOLUME/png
 		done
-	# Remove nrrd's if we don't want them
+	# Clean-up nrrd folder
 		if [ $keepnrrd == "N" ] || [ $keepnrrd == "n" ]; then
 			rm -rf $VOLUME/nrrd
 		fi
