@@ -88,7 +88,7 @@ done
 # Run all accumulated commands at once
 echo
 echo "$(date +"%F") :: $(date +"%T") :: Copying all files..." 1>&2
-echo $COPY_COMMANDS | parallel -eta -u -j 8
+echo $COPY_COMMANDS | parallel --eta -u -j 8
 echo
 echo ----------------------
 echo "  ALL WORK COMPLETE"
