@@ -229,25 +229,24 @@ for i in */; do
 			  fi
 			  
 			  # If we found R,G, & B pictures...
-			  if [ $rgbtif_true == "Y" ] || [ $rgbtif_true == "y" ] || [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
 				  if [[ -n $RED && -n $GREEN && -n $BLUE ]]; then
-					mkdir -p $output_folder/$vol_name/rgb
-					mkdir -p $output_folder/$vol_name/rgb_jpg
-					if [[ ! -e $output_folder/$vol_name/rgb/$page_name.tif ]]; then 
-					echo "Performing RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" >> $setuplog
-					RGB_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
+					if [ $rgbtif_true == "Y" ] || [ $rgbtif_true == "y" ]; then
+						mkdir -p $output_folder/$vol_name/rgb
+						if [[ ! -e $output_folder/$vol_name/rgb/$page_name.tif ]]; then 
+						echo "Performing RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" >> $setuplog
+						RGB_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
+						fi
 					fi
-					if [[ ! -e $output_folder/$vol_name/rgb_jpg/$page_name.jpg ]]; then
-					RGB_JPG_COMMANDS+="convert -quiet -quality 97 $output_folder/$vol_name/rgb/$page_name.tif $output_folder/$vol_name/rgb_jpg/$page_name.jpg\n"
+					if [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
+						mkdir -p $output_folder/$vol_name/rgb_jpg
+						if [[ ! -e $output_folder/$vol_name/rgb_jpg/$page_name.jpg ]]; then
+						RGB_JPG_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine -quality 97 $output_folder/$vol_name/rgb_jpg/$page_name.jpg\n"
+						fi
 					fi
-					# If we're not keeping the RGB TIFs
-					if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
-						CLEANUP_COMMANDS+="rm $output_folder/$vol_name/rgb/$page_name.tif\n"
-				  	fi
 				  else
 					echo "Skipping RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" 1>&2
 				  fi
-			  fi
+
 		
 			else
 			  echo "Skipping $j, no processed directory" 1>&2
@@ -276,36 +275,39 @@ done
 # Run all accumulated commands at once
 echo
 echo "$(date +"%F") :: $(date +"%T") :: Extracting metadata..." 1>&2
-echo $EXV_COMMANDS | parallel -eta -u -j 8
+echo $EXV_COMMANDS | parallel --eta -u -j 8
 echo
 if [ $flattif_true == "Y" ] || [ $flattif_true == "y" ] || [ $flatjpg_true == "Y" ] || [ $flatjpg_true == "y" ] || [ $rgbtif_true == "Y" ] || [ $rgbtif_true == "y" ] || [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
-echo "$(date +"%F") :: $(date +"%T") :: Flatfielding TIFs..." 1>&2
-echo $FLATFIELDTIF_COMMANDS | parallel --eta -u -j 8
-echo
+	echo "$(date +"%F") :: $(date +"%T") :: Flatfielding TIFs..." 1>&2
+	echo $FLATFIELDTIF_COMMANDS | parallel --eta -u -j 8
+	echo
 fi
 if [ $flatjpg_true == "Y" ] || [ $flatjpg_true == "y" ]; then
-echo "$(date +"%F") :: $(date +"%T") :: Flatfielding JPGs..." 1>&2
-echo $FLATFIELDJPG_COMMANDS | parallel --eta -u -j 8
-echo
+	echo "$(date +"%F") :: $(date +"%T") :: Flatfielding JPGs..." 1>&2
+	echo $FLATFIELDJPG_COMMANDS | parallel --eta -u -j 8
+	echo
 fi
-
 echo "$(date +"%F") :: $(date +"%T") :: Flatfielding PNGs..." 1>&2
 echo $FLATFIELDPNG_COMMANDS | parallel --eta -u -j 8
 echo
-echo "$(date +"%F") :: $(date +"%T") :: RGB..." 1>&2
-echo $RGB_COMMANDS | parallel --eta -u -j 8
-echo
-echo "$(date +"%F") :: $(date +"%T") :: JPG..." 1>&2
-echo $RGB_JPG_COMMANDS | parallel --eta -u -j 8
-echo
+if [ $rgbtif_true == "Y" ] || [ $rgbtif_true == "y" ]; then
+	echo "$(date +"%F") :: $(date +"%T") :: RGB..." 1>&2
+	echo $RGB_COMMANDS | parallel --eta -u -j 8
+	echo
+fi
+if [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
+	echo "$(date +"%F") :: $(date +"%T") :: RGB JPG..." 1>&2
+	echo $RGB_JPG_COMMANDS | parallel --eta -u -j 8
+	echo
+fi
 echo "$(date +"%F") :: $(date +"%T") :: Cleaning up..." 1>&2
-echo $CLEANUP_COMMANDS | parallel -eta -u -j 8
+echo $CLEANUP_COMMANDS | parallel --eta -u -j 8
 # Remove rgb folder if we don't want it...	
-	if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
-		for i in $output_folder/*; do
-			if [[ -d "$i" ]]; then
-				rm -rf $i/rgb
-			fi
-		done
-	fi
+#	if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
+#		for i in $output_folder/*; do
+#			if [[ -d "$i" ]]; then
+#				rm -rf $i/rgb
+#			fi
+#		done
+#	fi
 exit
