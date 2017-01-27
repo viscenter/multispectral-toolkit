@@ -234,13 +234,13 @@ for i in */; do
 						mkdir -p $output_folder/$vol_name/rgb
 						if [[ ! -e $output_folder/$vol_name/rgb/$page_name.tif ]]; then 
 						echo "Performing RGB for $(basename $j), was R:$RED G:$GREEN B:$BLUE" >> $setuplog
-						RGB_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
+						RGB_COMMANDS+="convert -quiet $RED $GREEN $BLUE -colorspace RGB -combine $output_folder/$vol_name/rgb/$page_name.tif\n"
 						fi
 					fi
 					if [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
 						mkdir -p $output_folder/$vol_name/rgb_jpg
 						if [[ ! -e $output_folder/$vol_name/rgb_jpg/$page_name.jpg ]]; then
-						RGB_JPG_COMMANDS+="convert -quiet $RED $GREEN $BLUE -channel RGB -combine -quality 97 $output_folder/$vol_name/rgb_jpg/$page_name.jpg\n"
+						RGB_JPG_COMMANDS+="convert -quiet $RED $GREEN $BLUE -colorspace RGB -combine -quality 97 $output_folder/$vol_name/rgb_jpg/$page_name.jpg\n"
 						fi
 					fi
 				  else
@@ -302,12 +302,4 @@ if [ $rgbjpg_true == "Y" ] || [ $rgbjpg_true == "y" ]; then
 fi
 echo "$(date +"%F") :: $(date +"%T") :: Cleaning up..." 1>&2
 echo $CLEANUP_COMMANDS | parallel --eta -u -j 8
-# Remove rgb folder if we don't want it...	
-#	if [[ "$rgbtif_true" == "N" || "$rgbtif_true" == "n" ]]; then
-#		for i in $output_folder/*; do
-#			if [[ -d "$i" ]]; then
-#				rm -rf $i/rgb
-#			fi
-#		done
-#	fi
 exit
