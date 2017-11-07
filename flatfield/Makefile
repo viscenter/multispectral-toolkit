@@ -4,8 +4,8 @@
 CC = gcc
 CXX = g++
 
-CFLAGS += $(shell pkg-config --cflags opencv)
-LIBS += $(shell pkg-config --libs opencv)
+CFLAGS += -Wall -std=c++11 $(shell pkg-config --cflags opencv)
+LIBS += -lopencv_core -lopencv_highgui -lopencv_imgcodecs -lopencv_imgproc -lopencv_photo
 
 BUILDBINS = pngflatten despot
 
